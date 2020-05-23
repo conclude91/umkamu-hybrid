@@ -1,6 +1,6 @@
 # umkamu
 
-UMkaMu provide your business
+UMkaMU provide your business
 
 ## Getting Started
 
