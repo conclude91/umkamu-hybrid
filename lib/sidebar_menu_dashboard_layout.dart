@@ -1,3 +1,4 @@
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -5,7 +6,7 @@ final String appName = "UMkaMu";
 final Color backgroundColor = Color(0xFFFFFFFF);
 final Color primaryContentColor = Color(0xFF4C4C4C);
 final Color secondaryContentColor = Color(0xFFFFFFFF);
-final Color primaryColor = Color(0xFFFF3232);
+final Color primaryColor = Color(0xFFE74C3C);
 final String primaryFont = 'fonts/Roboto-Light.tff';
 final double mediumSize = 20;
 final double largeSize = 25;
@@ -51,7 +52,7 @@ class _SidebarMenuDashboardPageState extends State<SidebarMenuDashboardPage>
     screenHeight = size.height;
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: primaryColor,
       body: Stack(
         children: <Widget>[
           menu(context),
@@ -134,65 +135,88 @@ class _SidebarMenuDashboardPageState extends State<SidebarMenuDashboardPage>
         child: Material(
           elevation: 8,
           color: backgroundColor,
-          child: Column(
-            children: <Widget>[
-              Container(
-                color: primaryColor,
-                padding: const EdgeInsets.only(
-                    left: 16, right: 16, top: 40, bottom: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  mainAxisSize: MainAxisSize.max,
-                  children: <Widget>[
-                    InkWell(
-                      child: Icon(Icons.menu, color: secondaryContentColor),
-                      onTap: () {
-                        setState(() {
-                          if (isCollapsed) {
-                            _animationController.forward();
-                          } else {
-                            _animationController.reverse();
-                          }
-                          isCollapsed = !isCollapsed;
-                        });
-                      },
-                    ),
-                    Text(appName,
-                        style: TextStyle(
-                            color: secondaryContentColor,
-                            fontSize: largeSize,
-                            fontFamily: primaryFont)),
-                    Icon(Icons.settings, color: secondaryContentColor),
-                  ],
+          child: Scaffold(
+            body: Column(
+              children: <Widget>[
+                Container(
+                  color: primaryColor,
+                  padding: const EdgeInsets.only(
+                      left: 16, right: 16, top: 40, bottom: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
+                    children: <Widget>[
+                      InkWell(
+                        child: Icon(Icons.menu, color: secondaryContentColor),
+                        onTap: () {
+                          setState(() {
+                            if (isCollapsed) {
+                              _animationController.forward();
+                            } else {
+                              _animationController.reverse();
+                            }
+                            isCollapsed = !isCollapsed;
+                          });
+                        },
+                      ),
+                      Text(appName,
+                          style: TextStyle(
+                              color: secondaryContentColor,
+                              fontSize: largeSize,
+                              fontFamily: primaryFont)),
+                      Icon(Icons.settings, color: secondaryContentColor),
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                padding: const EdgeInsets.only(top: 16, bottom: 16),
-                height: 250,
-                child: PageView(
-                  controller: PageController(viewportFraction: 0.8),
-                  scrollDirection: Axis.horizontal,
-                  pageSnapping: true,
-                  children: <Widget>[
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 8),
-                      color: Colors.amberAccent,
-                      width: 100,
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 8),
-                      color: Colors.blueAccent,
-                      width: 100,
-                    ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 8),
-                      color: Colors.greenAccent,
-                      width: 100,
-                    ),
-                  ],
+                Container(
+                  padding: const EdgeInsets.only(top: 16, bottom: 16),
+                  height: 250,
+                  child: PageView(
+                    controller: PageController(viewportFraction: 0.8),
+                    scrollDirection: Axis.horizontal,
+                    pageSnapping: true,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 8),
+                        color: Colors.amberAccent,
+                        width: 100,
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 8),
+                        color: Colors.blueAccent,
+                        width: 100,
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(horizontal: 8),
+                        color: Colors.greenAccent,
+                        width: 100,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+            bottomNavigationBar: CurvedNavigationBar(
+              color: primaryColor,
+              backgroundColor: backgroundColor,
+              buttonBackgroundColor: primaryColor,
+              height: 50,
+              animationDuration: Duration(milliseconds: 500),
+              animationCurve: Curves.fastOutSlowIn,
+              items: <Widget>[
+                Icon(Icons.add, size: mediumSize, color: backgroundColor),
+                Icon(Icons.list, size: mediumSize, color: backgroundColor),
+                Icon(Icons.compare_arrows,
+                    size: mediumSize, color: backgroundColor),
+                Icon(Icons.verified_user,
+                    size: mediumSize, color: backgroundColor),
+                Icon(Icons.add_a_photo,
+                    size: mediumSize, color: backgroundColor),
+              ],
+              onTap: (index) {
+                debugPrint('this is index-$index');
+              },
+            ),
           ),
         ),
       ),
