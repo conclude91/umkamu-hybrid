@@ -22,6 +22,7 @@ environment:
 
 dependencies:
   curved_navigation_bar:
+  flutter_open_whatsapp:
   flutter:
     sdk: flutter
 
