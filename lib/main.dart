@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:umkamu/sidebar_menu_dashboard_layout.dart';
+import 'package:umkamu/dashboard-page.dart';
 
 void main() => runApp(MyApp());
 
@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.red,
       ),
-      home: SidebarMenuDashboardPage(),
+      home: DashboardPage(),
     );
   }
 }

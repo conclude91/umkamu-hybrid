@@ -12,13 +12,12 @@ final String primaryFont = 'fonts/Roboto-Light.tff';
 final double mediumSize = 20;
 final double largeSize = 25;
 
-class SidebarMenuDashboardPage extends StatefulWidget {
+class DashboardPage extends StatefulWidget {
   @override
-  _SidebarMenuDashboardPageState createState() =>
-      _SidebarMenuDashboardPageState();
+  _DashboardPageState createState() => _DashboardPageState();
 }
 
-class _SidebarMenuDashboardPageState extends State<SidebarMenuDashboardPage>
+class _DashboardPageState extends State<DashboardPage>
     with SingleTickerProviderStateMixin {
   bool isCollapsed = true;
   double screenWidth, screenHeight;
@@ -56,69 +55,71 @@ class _SidebarMenuDashboardPageState extends State<SidebarMenuDashboardPage>
       backgroundColor: backgroundColor,
       body: Stack(
         children: <Widget>[
-          menu(context),
+          navDrawer(context),
           dashboard(context),
         ],
       ),
     );
   }
 
-  Widget menu(context) {
+  Widget navDrawer(context) {
     return SlideTransition(
       position: _slideAnimation,
       child: ScaleTransition(
         scale: _sidebarMenuScaleAnimation,
-        child: Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(
-                  'Dashboard',
-                  style: TextStyle(
-                      color: primaryContentColor,
-                      fontSize: mediumSize,
-                      fontFamily: primaryFont),
+        child: ListView(
+          padding: EdgeInsets.only(
+              left: 5, right: screenWidth * 0.25, top: 40, bottom: 16),
+          children: <Widget>[
+            SizedBox(
+              height: 250,
+              child: DrawerHeader(
+                child: Text('Drawer Header'),
+                decoration: BoxDecoration(
+                  color: Colors.blue,
                 ),
-                SizedBox(height: 10),
-                Text(
-                  'Messages',
-                  style: TextStyle(
-                      color: primaryContentColor,
-                      fontSize: mediumSize,
-                      fontFamily: primaryFont),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Utilities',
-                  style: TextStyle(
-                      color: primaryContentColor,
-                      fontSize: mediumSize,
-                      fontFamily: primaryFont),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Funds',
-                  style: TextStyle(
-                      color: primaryContentColor,
-                      fontSize: mediumSize,
-                      fontFamily: primaryFont),
-                ),
-                SizedBox(height: 10),
-                Text(
-                  'Branches',
-                  style: TextStyle(
-                      color: primaryContentColor,
-                      fontSize: mediumSize,
-                      fontFamily: primaryFont),
-                ),
-              ],
+              ),
             ),
-          ),
+            Text(
+              'Dashboard',
+              style: TextStyle(
+                  color: primaryContentColor,
+                  fontSize: mediumSize,
+                  fontFamily: primaryFont),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Messages',
+              style: TextStyle(
+                  color: primaryContentColor,
+                  fontSize: mediumSize,
+                  fontFamily: primaryFont),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Utilities',
+              style: TextStyle(
+                  color: primaryContentColor,
+                  fontSize: mediumSize,
+                  fontFamily: primaryFont),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Funds',
+              style: TextStyle(
+                  color: primaryContentColor,
+                  fontSize: mediumSize,
+                  fontFamily: primaryFont),
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Branches',
+              style: TextStyle(
+                  color: primaryContentColor,
+                  fontSize: mediumSize,
+                  fontFamily: primaryFont),
+            ),
+          ],
         ),
       ),
     );
@@ -167,7 +168,8 @@ class _SidebarMenuDashboardPageState extends State<SidebarMenuDashboardPage>
                                 fontSize: largeSize,
                                 fontFamily: primaryFont)),
                         InkWell(
-                          child: Icon(Icons.settings, color: primaryContentColor),
+                          child:
+                              Icon(Icons.settings, color: primaryContentColor),
                           onTap: () {
                             Navigator.push(
                                 context,
@@ -214,7 +216,8 @@ class _SidebarMenuDashboardPageState extends State<SidebarMenuDashboardPage>
                 animationDuration: Duration(milliseconds: 500),
                 animationCurve: Curves.fastOutSlowIn,
                 items: <Widget>[
-                  Icon(Icons.add, size: mediumSize, color: secondaryContentColor),
+                  Icon(Icons.add,
+                      size: mediumSize, color: secondaryContentColor),
                   Icon(Icons.list,
                       size: mediumSize, color: secondaryContentColor),
                   Icon(Icons.compare_arrows,
