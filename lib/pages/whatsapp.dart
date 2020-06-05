@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 
-class WhatsApp extends StatefulWidget {
+class WhatsAppPage extends StatefulWidget {
   @override
-  _WhatsAppState createState() => _WhatsAppState();
+  _WhatsAppPageState createState() => _WhatsAppPageState();
 }
 
-class _WhatsAppState extends State<WhatsApp> {
+class _WhatsAppPageState extends State<WhatsAppPage> {
   String _platformVersion = 'Unknown';
 
   @override
