@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:umkamu/pages/whatsapp.dart';
 import 'package:umkamu/utils/theme.dart';
 
-class DashboardPage extends StatefulWidget {
+class Dashboard extends StatefulWidget {
+  static const String id = "dashboard";
+
   @override
-  _DashboardPageState createState() => _DashboardPageState();
+  _DashboardState createState() => _DashboardState();
 }
 
-class _DashboardPageState extends State<DashboardPage>
+class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   bool isCollapsed = true;
   double screenWidth, screenHeight;
