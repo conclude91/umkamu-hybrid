@@ -21,11 +21,12 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  curved_navigation_bar:
-  flutter_open_whatsapp:
   flutter:
     sdk: flutter
 
+  curved_navigation_bar:
+  flutter_open_whatsapp:
+  carousel_slider:
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
