@@ -1,19 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_onboarding_ui_concept/constants/constants.dart';
-import 'package:flutter_onboarding_ui_concept/ui_view/slider_layout_view.dart';
-import 'package:flutter_onboarding_ui_concept/widgets/custom_font.dart';
+import 'package:umkamu/ui_view/slider_layout_view.dart';
+import 'package:umkamu/utils/theme.dart';
 
-class LandingPage extends StatefulWidget {
+class OnBoarding extends StatefulWidget {
+  static const String id = "splashscreen";
+
   @override
-  State<StatefulWidget> createState() => _LandingPageState();
+  State<StatefulWidget> createState() => _OnBoardingState();
 }
 
-class _LandingPageState extends State<LandingPage> {
+class _OnBoardingState extends State<OnBoarding> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: backgroundColor,
       body: onBordingBody(),
     );
   }

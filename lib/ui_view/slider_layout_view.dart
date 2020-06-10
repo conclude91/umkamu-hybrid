@@ -1,10 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_onboarding_ui_concept/constants/constants.dart';
-import 'package:flutter_onboarding_ui_concept/model/slider.dart';
-import 'package:flutter_onboarding_ui_concept/widgets/slide_dots.dart';
-import 'package:flutter_onboarding_ui_concept/widgets/slide_items/slide_item.dart';
+import 'package:flutter/material.dart';
+import 'package:umkamu/constants/constants.dart';
+import 'package:umkamu/models/slider.dart';
+import 'package:umkamu/pages/dashboard.dart';
+import 'package:umkamu/widgets/slide_dots.dart';
+import 'package:umkamu/widgets/slide_item.dart';
 
 class SliderLayoutView extends StatefulWidget {
   @override
@@ -60,19 +62,27 @@ class _SliderLayoutViewState extends State<SliderLayoutView> {
                   children: <Widget>[
                     Align(
                       alignment: Alignment.bottomRight,
-                      child: Padding(
-                        padding: EdgeInsets.only(right: 15.0, bottom: 15.0),
-                        child: Text(
-                          Constants.NEXT,
-                          style: TextStyle(
-                            fontFamily: Constants.OPEN_SANS,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14.0,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => Dashboard()));
+                        },
+                        child: Padding(
+                          padding: EdgeInsets.only(right: 15.0, bottom: 15.0),
+                          child: Text(
+                            Constants.SKIP,
+                            style: TextStyle(
+                              fontFamily: Constants.OPEN_SANS,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14.0,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                    Align(
+                    /*Align(
                       alignment: Alignment.bottomLeft,
                       child: Padding(
                         padding: EdgeInsets.only(left: 15.0, bottom: 15.0),
@@ -85,7 +95,7 @@ class _SliderLayoutViewState extends State<SliderLayoutView> {
                           ),
                         ),
                       ),
-                    ),
+                    ),*/
                     Container(
                       alignment: AlignmentDirectional.bottomCenter,
                       margin: EdgeInsets.only(bottom: 20.0),

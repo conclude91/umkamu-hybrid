@@ -1,11 +1,19 @@
 import 'package:flutter/cupertino.dart';
 
-class Category {
+class User {
   final String id;
-  final String category;
+  final String nama;
+  final String email;
+  final String password;
+  final String whatsapp;
+  final String tipe;
 
-  Category({
+  User({
     @required this.id,
-    @required this.category,
+    @required this.nama,
+    @required this.email,
+    @required this.password,
+    @required this.whatsapp,
+    @required this.tipe,
   });
 }

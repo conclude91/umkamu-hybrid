@@ -1,6 +1,6 @@
 class Constants{
-  static const String POPPINS = "Poppins";
-  static const String OPEN_SANS = "OpenSans";
+  static const String POPPINS = "Roboto";
+  static const String OPEN_SANS = "Roboto";
   static const String SKIP = "Skip";
   static const String NEXT = "Next";
   static const String SLIDER_HEADING_1 = "Easy Exchange!";

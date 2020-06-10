@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_onboarding_ui_concept/constants/constants.dart';
-import 'package:flutter_onboarding_ui_concept/model/slider.dart';
+import 'package:umkamu/constants/constants.dart';
+import 'package:umkamu/models/slider.dart';
 
 class SlideItem extends StatelessWidget {
   final int index;
+
   SlideItem(this.index);
 
   @override
