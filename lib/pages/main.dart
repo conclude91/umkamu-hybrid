@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:umkamu/pages/dashboard.dart';
-import 'package:umkamu/pages/onboarding.dart';
+import 'package:umkamu/pages/register.dart';
 import 'package:umkamu/pages/splashscreen.dart';
-import 'package:umkamu/ui_view/slider_layout_view.dart';
 import 'package:umkamu/utils/theme.dart';
+
+import 'login.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,8 +14,21 @@ class MyApp extends StatelessWidget {
     setStatusBarColor(primaryColor);
     return MaterialApp(
       title: appName,
-      //home: Dashboard(),
-      initialRoute: SplashScreen.id,
+      home: Login(
+        backgroundColor1: backgroundColor,
+        backgroundColor2: backgroundColor,
+        highlightColor: primaryColor,
+        foregroundColor: primaryContentColor,
+        logo: AssetImage("assets/images/logo.png"),
+      ),
+      /*Register(
+        backgroundColor1: backgroundColor,
+        backgroundColor2: backgroundColor,
+        highlightColor: primaryColor,
+        foregroundColor: primaryContentColor,
+        logo: AssetImage("assets/images/logo.png"),
+      ),*/
+      //initialRoute: SplashScreen.id,
       routes: {
         SplashScreen.id: (context) => SplashScreen(),
         Dashboard.id: (context) => Dashboard(),

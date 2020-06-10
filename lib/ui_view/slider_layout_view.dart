@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:umkamu/constants/constants.dart';
 import 'package:umkamu/models/slider.dart';
 import 'package:umkamu/pages/dashboard.dart';
+import 'package:umkamu/pages/login.dart';
+import 'package:umkamu/utils/theme.dart';
 import 'package:umkamu/widgets/slide_dots.dart';
 import 'package:umkamu/widgets/slide_item.dart';
 
@@ -65,9 +67,17 @@ class _SliderLayoutViewState extends State<SliderLayoutView> {
                       child: InkWell(
                         onTap: () {
                           Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => Dashboard()));
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Login(
+                                backgroundColor1: backgroundColor,
+                                backgroundColor2: backgroundColor,
+                                highlightColor: primaryColor,
+                                foregroundColor: primaryContentColor,
+                                logo: AssetImage("assets/images/logo.png"),
+                              ),
+                            ),
+                          );
                         },
                         child: Padding(
                           padding: EdgeInsets.only(right: 15.0, bottom: 15.0),
