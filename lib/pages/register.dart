@@ -3,35 +3,20 @@ import 'package:umkamu/pages/dashboard.dart';
 import 'package:umkamu/utils/theme.dart';
 
 class Register extends StatelessWidget {
-  final Color backgroundColor1;
-  final Color backgroundColor2;
-  final Color highlightColor;
-  final Color foregroundColor;
-  final AssetImage logo;
-
-  Register(
-      {Key k,
-      this.backgroundColor1,
-      this.backgroundColor2,
-      this.highlightColor,
-      this.foregroundColor,
-      this.logo});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: new BoxDecoration(
-          gradient: new LinearGradient(
-            begin: Alignment.centerLeft,
-            end: new Alignment(1.0, 0.0),
-            // 10% of the width, so there are ten blinds.
-            colors: [this.backgroundColor1, this.backgroundColor2],
-            // whitish to gray
-            tileMode: TileMode.repeated, // repeats the gradient over the canvas
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/doodle-potrait.png'),
+            fit: BoxFit.cover,
           ),
         ),
-        height: MediaQuery.of(context).size.height,
+        height: MediaQuery
+            .of(context)
+            .size
+            .height,
         child: Column(
           children: <Widget>[
             Container(
@@ -49,13 +34,16 @@ class Register extends StatelessWidget {
               ),
             ),
             new Container(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                       width: 0.5,
                       style: BorderStyle.solid),
                 ),
@@ -67,10 +55,10 @@ class Register extends StatelessWidget {
                 children: <Widget>[
                   new Padding(
                     padding:
-                        EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
+                    EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.account_circle,
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                     ),
                   ),
                   new Expanded(
@@ -79,7 +67,7 @@ class Register extends StatelessWidget {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Nama',
-                        hintStyle: TextStyle(color: this.foregroundColor),
+                        hintStyle: TextStyle(color: primaryContentColor),
                       ),
                     ),
                   ),
@@ -87,13 +75,16 @@ class Register extends StatelessWidget {
               ),
             ),
             new Container(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                       width: 0.5,
                       style: BorderStyle.solid),
                 ),
@@ -105,10 +96,10 @@ class Register extends StatelessWidget {
                 children: <Widget>[
                   new Padding(
                     padding:
-                        EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
+                    EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.alternate_email,
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                     ),
                   ),
                   new Expanded(
@@ -117,7 +108,7 @@ class Register extends StatelessWidget {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'example@abc.com',
-                        hintStyle: TextStyle(color: this.foregroundColor),
+                        hintStyle: TextStyle(color: primaryContentColor),
                       ),
                     ),
                   ),
@@ -125,13 +116,16 @@ class Register extends StatelessWidget {
               ),
             ),
             new Container(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                       width: 0.5,
                       style: BorderStyle.solid),
                 ),
@@ -143,10 +137,10 @@ class Register extends StatelessWidget {
                 children: <Widget>[
                   new Padding(
                     padding:
-                        EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
+                    EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.lock_open,
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                     ),
                   ),
                   new Expanded(
@@ -156,7 +150,7 @@ class Register extends StatelessWidget {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: '*********',
-                        hintStyle: TextStyle(color: this.foregroundColor),
+                        hintStyle: TextStyle(color: primaryContentColor),
                       ),
                     ),
                   ),
@@ -164,13 +158,16 @@ class Register extends StatelessWidget {
               ),
             ),
             new Container(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                       width: 0.5,
                       style: BorderStyle.solid),
                 ),
@@ -182,10 +179,10 @@ class Register extends StatelessWidget {
                 children: <Widget>[
                   new Padding(
                     padding:
-                        EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
+                    EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.phone_android,
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                     ),
                   ),
                   new Expanded(
@@ -194,7 +191,7 @@ class Register extends StatelessWidget {
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'WhatsApp',
-                        hintStyle: TextStyle(color: this.foregroundColor),
+                        hintStyle: TextStyle(color: primaryContentColor),
                       ),
                     ),
                   ),
@@ -202,7 +199,10 @@ class Register extends StatelessWidget {
               ),
             ),
             new Container(
-              width: MediaQuery.of(context).size.width,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 30.0),
               alignment: Alignment.center,
               child: new Row(
@@ -211,8 +211,9 @@ class Register extends StatelessWidget {
                     child: new FlatButton(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
-                      color: this.highlightColor,
-                      onPressed: () => {
+                      color: primaryColor,
+                      onPressed: () =>
+                      {
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
