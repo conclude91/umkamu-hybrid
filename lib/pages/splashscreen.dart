@@ -1,6 +1,8 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:umkamu/models/user.dart';
+import 'package:umkamu/pages/dashboard.dart';
 import 'package:umkamu/pages/onboarding.dart';
 import 'package:umkamu/utils/theme.dart';
 
@@ -14,18 +16,17 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Timer _timer;
 
-  removeScreen() {
+  authenticate() async {
     return _timer = Timer(Duration(seconds: 5), () {
-      Navigator.of(context).pushReplacementNamed(OnBoarding.id);
-//      Navigator.pushReplacement(
-//          context, MaterialPageRoute(builder: (context) => OnBoarding()));
+        Navigator.of(context).pushReplacementNamed(OnBoarding.id);
+//        Navigator.of(context).pushReplacementNamed(Dashboard.id);
     });
   }
 
   @override
   void initState() {
     super.initState();
-    removeScreen();
+    authenticate();
   }
 
   @override

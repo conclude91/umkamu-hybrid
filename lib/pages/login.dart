@@ -119,13 +119,7 @@ class Login extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
                       color: primaryColor,
-                      onPressed: () => {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Dashboard(),
-                          ),
-                        ),
+                      onPressed: () async {
                       },
                       child: Text(
                         "Masuk",

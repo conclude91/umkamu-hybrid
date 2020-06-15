@@ -1,10 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:umkamu/pages/dashboard.dart';
+import 'package:umkamu/providers/user_provider.dart';
 import 'package:umkamu/utils/theme.dart';
 
-class Register extends StatelessWidget {
+class Register extends StatefulWidget {
+  @override
+  _RegisterState createState() => _RegisterState();
+}
+
+class _RegisterState extends State<Register> {
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -13,10 +22,7 @@ class Register extends StatelessWidget {
             fit: BoxFit.cover,
           ),
         ),
-        height: MediaQuery
-            .of(context)
-            .size
-            .height,
+        height: MediaQuery.of(context).size.height,
         child: Column(
           children: <Widget>[
             Container(
@@ -34,10 +40,7 @@ class Register extends StatelessWidget {
               ),
             ),
             new Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
@@ -55,7 +58,7 @@ class Register extends StatelessWidget {
                 children: <Widget>[
                   new Padding(
                     padding:
-                    EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
+                        EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.account_circle,
                       color: primaryContentColor,
@@ -69,16 +72,14 @@ class Register extends StatelessWidget {
                         hintText: 'Nama',
                         hintStyle: TextStyle(color: primaryContentColor),
                       ),
+                      onChanged: (value) => userProvider.setNama(value),
                     ),
                   ),
                 ],
               ),
             ),
             new Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
@@ -96,7 +97,7 @@ class Register extends StatelessWidget {
                 children: <Widget>[
                   new Padding(
                     padding:
-                    EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
+                        EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.alternate_email,
                       color: primaryContentColor,
@@ -110,16 +111,14 @@ class Register extends StatelessWidget {
                         hintText: 'example@abc.com',
                         hintStyle: TextStyle(color: primaryContentColor),
                       ),
+                      onChanged: (value) => userProvider.setEmail(value),
                     ),
                   ),
                 ],
               ),
             ),
             new Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
@@ -137,7 +136,7 @@ class Register extends StatelessWidget {
                 children: <Widget>[
                   new Padding(
                     padding:
-                    EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
+                        EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.lock_open,
                       color: primaryContentColor,
@@ -152,16 +151,14 @@ class Register extends StatelessWidget {
                         hintText: '*********',
                         hintStyle: TextStyle(color: primaryContentColor),
                       ),
+                      onChanged: (value) => userProvider.setPassword(value),
                     ),
                   ),
                 ],
               ),
             ),
             new Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
@@ -179,7 +176,7 @@ class Register extends StatelessWidget {
                 children: <Widget>[
                   new Padding(
                     padding:
-                    EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
+                        EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.phone_android,
                       color: primaryContentColor,
@@ -193,16 +190,14 @@ class Register extends StatelessWidget {
                         hintText: 'WhatsApp',
                         hintStyle: TextStyle(color: primaryContentColor),
                       ),
+                      onChanged: (value) => userProvider.setWhatsapp(value),
                     ),
                   ),
                 ],
               ),
             ),
             new Container(
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width,
+              width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 30.0),
               alignment: Alignment.center,
               child: new Row(
@@ -212,14 +207,14 @@ class Register extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
                       color: primaryColor,
-                      onPressed: () =>
-                      {
-                        Navigator.pushReplacement(
+                      onPressed: () => {
+                        userProvider.saveUser(),
+                        /*Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                             builder: (context) => Dashboard(),
                           ),
-                        ),
+                        ),*/
                       },
                       child: Text(
                         "Daftar",

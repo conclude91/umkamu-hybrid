@@ -16,4 +16,15 @@ class User {
     @required this.whatsapp,
     @required this.tipe,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'nama': nama,
+      'email': email,
+      'password': password,
+      'whatsapp': whatsapp,
+      'tipe': tipe,
+    };
+  }
 }

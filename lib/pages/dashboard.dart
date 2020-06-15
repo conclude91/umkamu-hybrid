@@ -352,7 +352,7 @@ class _DashboardState extends State<Dashboard>
                                   width: smallSize,
                                 ),
                                 Text(
-                                  'Exit',
+                                  'Keluar',
                                   style: TextStyle(
                                       color: primaryContentColor,
                                       fontSize: smallSize,
@@ -361,7 +361,8 @@ class _DashboardState extends State<Dashboard>
                               ],
                             ),
                           ),
-                          onTap: () {},
+                          onTap: () async {
+                          },
                         ),
                       ),
                     ),
