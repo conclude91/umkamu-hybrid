@@ -1,11 +1,19 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:umkamu/models/franchise.dart';
 import 'package:umkamu/models/user.dart';
 
 class FirestoreService {
   Firestore _db = Firestore.instance;
   FirebaseStorage _storage = FirebaseStorage.instance;
+
+  Future<void> saveFranchise(Franchise franchise) {
+    return _db
+        .collection('franchises')
+        .document(franchise.id)
+        .setData(franchise.toMap());
+  }
 
   Future<void> saveUser(User user) {
     return _db.collection('users').document(user.id).setData(user.toMap());
@@ -18,8 +26,19 @@ class FirestoreService {
         .toList());
   }
 
+  Stream<List<Franchise>> getAllFranchise() {
+    return _db.collection('franchises').snapshots().map((snapshot) => snapshot
+        .documents
+        .map((document) => Franchise.fromFirestore(document.data))
+        .toList());
+  }
+
   Future<void> removeUser(String id) {
     return _db.collection('users').document(id).delete();
+  }
+
+  Future<void> removeFranchise(String id) {
+    return _db.collection('franchises').document(id).delete();
   }
 
   Future<String> uploadFile(String name, File file) async {
