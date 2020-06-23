@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:umkamu/pages/login.dart';
@@ -70,12 +69,8 @@ class _OnBoardingState extends State<OnBoarding> {
                         alignment: Alignment.bottomRight,
                         child: InkWell(
                           onTap: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Login(),
-                              ),
-                            );
+                            Navigator.of(context)
+                                .pushReplacementNamed(Login.id);
                           },
                           child: Padding(
                             padding: EdgeInsets.only(right: 15.0, bottom: 15.0),
@@ -83,8 +78,7 @@ class _OnBoardingState extends State<OnBoarding> {
                               "Skip",
                               style: TextStyle(
                                 fontFamily: primaryFont,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14.0,
+                                fontSize: tinySize,
                               ),
                             ),
                           ),

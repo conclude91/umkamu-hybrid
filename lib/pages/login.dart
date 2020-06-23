@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:umkamu/pages/dashboard.dart';
 import 'package:umkamu/pages/register.dart';
 import 'package:umkamu/utils/theme.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
+  static const String id = "login";
+
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,15 +31,18 @@ class Login extends StatelessWidget {
                 child: new Column(
                   children: <Widget>[
                     Container(
-                      height: 128.0,
-                      width: 128.0,
-                      child: Image.asset('assets/images/logo.png'),
+                      height: 100,
+                      width: 100,
+                      child: Image(
+                        color: primaryColor,
+                        image: AssetImage('assets/images/logo.png'),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            new Container(
+            Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0),
               alignment: Alignment.center,
@@ -44,11 +55,11 @@ class Login extends StatelessWidget {
                 ),
               ),
               padding: const EdgeInsets.only(left: 0.0, right: 10.0),
-              child: new Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Padding(
+                  Padding(
                     padding:
                         EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
@@ -56,7 +67,7 @@ class Login extends StatelessWidget {
                       color: primaryContentColor,
                     ),
                   ),
-                  new Expanded(
+                  Expanded(
                     child: TextField(
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
@@ -69,7 +80,7 @@ class Login extends StatelessWidget {
                 ],
               ),
             ),
-            new Container(
+            Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
@@ -82,11 +93,11 @@ class Login extends StatelessWidget {
                 ),
               ),
               padding: const EdgeInsets.only(left: 0.0, right: 10.0),
-              child: new Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Padding(
+                  Padding(
                     padding:
                         EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
@@ -94,7 +105,7 @@ class Login extends StatelessWidget {
                       color: primaryContentColor,
                     ),
                   ),
-                  new Expanded(
+                  Expanded(
                     child: TextField(
                       obscureText: true,
                       textAlign: TextAlign.center,
@@ -108,18 +119,20 @@ class Login extends StatelessWidget {
                 ],
               ),
             ),
-            new Container(
+            Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 30.0),
               alignment: Alignment.center,
-              child: new Row(
+              child: Row(
                 children: <Widget>[
-                  new Expanded(
-                    child: new FlatButton(
+                  Expanded(
+                    child: FlatButton(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
                       color: primaryColor,
-                      onPressed: () async {
+                      onPressed: () => {
+                        Navigator.of(context)
+                            .pushReplacementNamed(Dashboard.id),
                       },
                       child: Text(
                         "Masuk",
@@ -130,14 +143,14 @@ class Login extends StatelessWidget {
                 ],
               ),
             ),
-            new Container(
+            Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
-              child: new Row(
+              child: Row(
                 children: <Widget>[
-                  new Expanded(
-                    child: new FlatButton(
+                  Expanded(
+                    child: FlatButton(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
                       color: Colors.transparent,
@@ -151,28 +164,23 @@ class Login extends StatelessWidget {
                 ],
               ),
             ),
-            new Expanded(
+            Expanded(
               child: Divider(),
             ),
-            new Container(
+            Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(
                   left: 40.0, right: 40.0, top: 10.0, bottom: 20.0),
               alignment: Alignment.center,
-              child: new Row(
+              child: Row(
                 children: <Widget>[
-                  new Expanded(
-                    child: new FlatButton(
+                  Expanded(
+                    child: FlatButton(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
                       color: Colors.transparent,
                       onPressed: () => {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Register(),
-                          ),
-                        ),
+                        Navigator.of(context).pushReplacementNamed(Register.id),
                       },
                       child: Text(
                         "Belum punya akun? Daftar dulu disini.",
