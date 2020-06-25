@@ -1,8 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:umkamu/pages/myhomepage.dart';
+import 'package:umkamu/pages/user_form.dart';
+import 'package:umkamu/pages/user_list.dart';
 import 'package:umkamu/pages/whatsapp.dart';
 import 'package:umkamu/utils/theme.dart';
+import 'package:flutter/cupertino.dart';
 
 class Dashboard extends StatefulWidget {
   static const String id = "dashboard";
@@ -352,7 +356,7 @@ class _DashboardState extends State<Dashboard>
                                   width: smallSize,
                                 ),
                                 Text(
-                                  'Exit',
+                                  'Keluar',
                                   style: TextStyle(
                                       color: primaryContentColor,
                                       fontSize: smallSize,
@@ -361,7 +365,7 @@ class _DashboardState extends State<Dashboard>
                               ],
                             ),
                           ),
-                          onTap: () {},
+                          onTap: () async {},
                         ),
                       ),
                     ),
@@ -413,6 +417,7 @@ class _DashboardState extends State<Dashboard>
                           },
                         ),
                         Image(
+                          color: primaryColor,
                           image: AssetImage('assets/images/umkamu.png'),
                           height: 20,
                         ),
@@ -514,51 +519,63 @@ class _DashboardState extends State<Dashboard>
                             children: <Widget>[
                               Expanded(
                                 flex: 2,
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Image(
-                                        image: AssetImage(
-                                            'assets/images/kantor.png'),
-                                        height: 50,
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text(
-                                        'Kantor',
-                                        style: TextStyle(
-                                            color: primaryContentColor,
-                                            fontSize: tinySize,
-                                            fontFamily: primaryFont),
-                                      ),
-                                    ],
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .pushNamed(MyHomePage.id);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Image(
+                                          image: AssetImage(
+                                              'assets/images/kantor.png'),
+                                          height: 50,
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          'Kantor',
+                                          style: TextStyle(
+                                              color: primaryContentColor,
+                                              fontSize: tinySize,
+                                              fontFamily: primaryFont),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                               Expanded(
                                 flex: 2,
-                                child: Container(
-                                  padding: EdgeInsets.all(10),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Image(
-                                        image: AssetImage(
-                                            'assets/images/cabang.png'),
-                                        height: 50,
-                                      ),
-                                      SizedBox(
-                                        height: 5,
-                                      ),
-                                      Text(
-                                        'Cabang',
-                                        style: TextStyle(
-                                            color: primaryContentColor,
-                                            fontSize: tinySize,
-                                            fontFamily: primaryFont),
-                                      ),
-                                    ],
+                                child: InkWell(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .pushNamed(UserList.id);
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Image(
+                                          image: AssetImage(
+                                              'assets/images/cabang.png'),
+                                          height: 50,
+                                        ),
+                                        SizedBox(
+                                          height: 5,
+                                        ),
+                                        Text(
+                                          'Cabang',
+                                          style: TextStyle(
+                                              color: primaryContentColor,
+                                              fontSize: tinySize,
+                                              fontFamily: primaryFont),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

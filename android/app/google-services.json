@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "407703211368",
+    "firebase_url": "https://umkamu-b4a41.firebaseio.com",
+    "project_id": "umkamu-b4a41",
+    "storage_bucket": "umkamu-b4a41.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407703211368:android:77f66f3a31667bb1a55add",
+        "android_client_info": {
+          "package_name": "com.umkamu"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "407703211368-eheo94016n20n78nsfcfcaambsapue97.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBGiaukbJpPgf2hKHBVDURjCaIK690lR60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "407703211368-eheo94016n20n78nsfcfcaambsapue97.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

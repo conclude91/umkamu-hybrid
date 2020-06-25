@@ -1,34 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:umkamu/pages/dashboard.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:umkamu/providers/user_provider.dart';
 import 'package:umkamu/utils/theme.dart';
 
-class Register extends StatelessWidget {
-  final Color backgroundColor1;
-  final Color backgroundColor2;
-  final Color highlightColor;
-  final Color foregroundColor;
-  final AssetImage logo;
+import 'login.dart';
 
-  Register(
-      {Key k,
-      this.backgroundColor1,
-      this.backgroundColor2,
-      this.highlightColor,
-      this.foregroundColor,
-      this.logo});
+class Register extends StatefulWidget {
+  static const String id = "register";
 
   @override
+  _RegisterState createState() => _RegisterState();
+}
+
+class _RegisterState extends State<Register> {
+  @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
+
     return Scaffold(
       body: Container(
-        decoration: new BoxDecoration(
-          gradient: new LinearGradient(
-            begin: Alignment.centerLeft,
-            end: new Alignment(1.0, 0.0),
-            // 10% of the width, so there are ten blinds.
-            colors: [this.backgroundColor1, this.backgroundColor2],
-            // whitish to gray
-            tileMode: TileMode.repeated, // repeats the gradient over the canvas
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/doodle-potrait.png'),
+            fit: BoxFit.cover,
           ),
         ),
         height: MediaQuery.of(context).size.height,
@@ -37,192 +32,221 @@ class Register extends StatelessWidget {
             Container(
               padding: const EdgeInsets.only(top: 150.0, bottom: 50.0),
               child: Center(
-                child: new Column(
+                child: Column(
                   children: <Widget>[
                     Container(
-                      height: 128.0,
-                      width: 128.0,
-                      child: Image.asset('assets/images/logo.png'),
+                      height: 100,
+                      width: 100,
+                      child: Image(
+                        color: primaryColor,
+                        image: AssetImage('assets/images/logo.png'),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
-            new Container(
+            Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                       width: 0.5,
                       style: BorderStyle.solid),
                 ),
               ),
               padding: const EdgeInsets.only(left: 0.0, right: 10.0),
-              child: new Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Padding(
+                  Padding(
                     padding:
                         EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.account_circle,
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                     ),
                   ),
-                  new Expanded(
+                  Expanded(
                     child: TextField(
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Nama',
-                        hintStyle: TextStyle(color: this.foregroundColor),
+                        hintStyle: TextStyle(color: primaryContentColor),
                       ),
+                      onChanged: (value) => userProvider.setNama(value),
                     ),
                   ),
                 ],
               ),
             ),
-            new Container(
+            Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                       width: 0.5,
                       style: BorderStyle.solid),
                 ),
               ),
               padding: const EdgeInsets.only(left: 0.0, right: 10.0),
-              child: new Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Padding(
+                  Padding(
                     padding:
                         EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.alternate_email,
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                     ),
                   ),
-                  new Expanded(
+                  Expanded(
                     child: TextField(
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'example@abc.com',
-                        hintStyle: TextStyle(color: this.foregroundColor),
+                        hintStyle: TextStyle(color: primaryContentColor),
                       ),
+                      onChanged: (value) => userProvider.setEmail(value),
                     ),
                   ),
                 ],
               ),
             ),
-            new Container(
+            Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                       width: 0.5,
                       style: BorderStyle.solid),
                 ),
               ),
               padding: const EdgeInsets.only(left: 0.0, right: 10.0),
-              child: new Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Padding(
+                  Padding(
                     padding:
                         EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.lock_open,
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                     ),
                   ),
-                  new Expanded(
+                  Expanded(
                     child: TextField(
                       obscureText: true,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: '*********',
-                        hintStyle: TextStyle(color: this.foregroundColor),
+                        hintStyle: TextStyle(color: primaryContentColor),
                       ),
+                      onChanged: (value) => userProvider.setPassword(value),
                     ),
                   ),
                 ],
               ),
             ),
-            new Container(
+            Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                       width: 0.5,
                       style: BorderStyle.solid),
                 ),
               ),
               padding: const EdgeInsets.only(left: 0.0, right: 10.0),
-              child: new Row(
+              child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  new Padding(
+                  Padding(
                     padding:
                         EdgeInsets.only(top: 10.0, bottom: 10.0, right: 00.0),
                     child: Icon(
                       Icons.phone_android,
-                      color: this.foregroundColor,
+                      color: primaryContentColor,
                     ),
                   ),
-                  new Expanded(
+                  Expanded(
                     child: TextField(
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'WhatsApp',
-                        hintStyle: TextStyle(color: this.foregroundColor),
+                        hintStyle: TextStyle(color: primaryContentColor),
+                      ),
+                      onChanged: (value) => userProvider.setWhatsapp(value),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 30.0),
+              alignment: Alignment.center,
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: FlatButton(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 20.0, horizontal: 20.0),
+                      color: primaryColor,
+                      onPressed: () => {
+                        userProvider.saveUser(),
+                      },
+                      child: Text(
+                        "Daftar",
+                        style: TextStyle(color: secondaryContentColor),
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            new Container(
+            Expanded(
+              child: Divider(),
+            ),
+            Container(
               width: MediaQuery.of(context).size.width,
-              margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 30.0),
+              margin: const EdgeInsets.only(
+                  left: 40.0, right: 40.0, top: 10.0, bottom: 20.0),
               alignment: Alignment.center,
-              child: new Row(
+              child: Row(
                 children: <Widget>[
-                  new Expanded(
-                    child: new FlatButton(
+                  Expanded(
+                    child: FlatButton(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
-                      color: this.highlightColor,
+                      color: Colors.transparent,
                       onPressed: () => {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => Dashboard(),
-                          ),
-                        ),
+                        Navigator.of(context).pushReplacementNamed(Login.id),
                       },
                       child: Text(
-                        "Daftar",
-                        style: TextStyle(color: secondaryContentColor),
+                        "Sudah punya akun? Silahkan masuk disini.",
+                        style: TextStyle(color: primaryContentColor),
                       ),
                     ),
                   ),
