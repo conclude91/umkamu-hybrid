@@ -1,14 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:umkamu/models/user.dart';
 import 'package:umkamu/services/firestore_service.dart';
-import 'package:uuid/uuid.dart';
 
 class UserProvider with ChangeNotifier {
   final firestoreService = FirestoreService();
-  var uuid = Uuid();
-
-  // uuid.v4();
 
   String _id;
   String _foto;
@@ -22,6 +19,8 @@ class UserProvider with ChangeNotifier {
   int _poin;
   int _komisi;
   int _royalty;
+  String _leader;
+  String _temp_file;
 
   // Getter
   String get id => _id;
@@ -48,102 +47,104 @@ class UserProvider with ChangeNotifier {
 
   int get royalty => _royalty;
 
-  // Setter
-  setPoin(int value) {
-    _poin = value;
-  }
+  String get temp_file => _temp_file;
 
-  setId(String value) {
+  String get leader => _leader;
+
+  // Setter
+  set id(String value) {
     _id = value;
     notifyListeners();
   }
 
-  setFoto(String value) {
+  set foto(String value) {
     _foto = value;
     notifyListeners();
   }
 
-  setNama(String value) {
+  set nama(String value) {
     _nama = value;
     notifyListeners();
   }
 
-  setJenisKelamin(String value) {
+  set jenis_kelamin(String value) {
     _jenis_kelamin = value;
     notifyListeners();
   }
 
-  setTipe(String value) {
+  set tipe(String value) {
     _tipe = value;
     notifyListeners();
   }
 
-  setWhatsapp(String value) {
+  set whatsapp(String value) {
     _whatsapp = value;
     notifyListeners();
   }
 
-  setRekening(String value) {
+  set rekening(String value) {
     _rekening = value;
     notifyListeners();
   }
 
-  setPassword(String value) {
+  set password(String value) {
     _password = value;
     notifyListeners();
   }
 
-  setEmail(String value) {
+  set email(String value) {
     _email = value;
     notifyListeners();
   }
 
-  setKomisi(int value) {
+  set poin(int value) {
+    _poin = value;
+    notifyListeners();
+  }
+
+  set komisi(int value) {
     _komisi = value;
+    notifyListeners();
   }
 
-  setRoyalty(int value) {
+  set royalty(int value) {
     _royalty = value;
+    notifyListeners();
   }
 
-  setUser(User user) {
-    setId(user.id);
-    setFoto(user.foto);
-    setNama(user.nama);
-    setJenisKelamin(user.jenis_kelamin);
-    setEmail(user.email);
-    setPassword(user.password);
-    setWhatsapp(user.whatsapp);
-    setRekening(user.rekening);
-    setPoin(user.poin);
-    setKomisi(user.komisi);
-    setRoyalty(user.royalty);
-    setTipe(user.tipe);
+  set temp_file(String value) {
+    _temp_file = value;
+    notifyListeners();
   }
 
-  saveUser() async {
+  set leader(String value) {
+    _leader = value;
+  }
+
+  set user(User user) {
+    id = user.id;
+    foto = user.foto;
+    nama = user.nama;
+    jenis_kelamin = user.jenis_kelamin;
+    email = user.email;
+    password = user.password;
+    whatsapp = user.whatsapp;
+    rekening = user.rekening;
+    poin = user.poin;
+    komisi = user.komisi;
+    royalty = user.royalty;
+    tipe = user.tipe;
+    leader = user.leader;
+  }
+
+  save() async {
     User user;
-    if (_id == null) {
-      String id = DateTime.now().millisecondsSinceEpoch.toString();
-      String fotoUrl = await firestoreService.uploadFile(id, File(foto));
+    if (id == null) {
+      String millis = DateTime.now().millisecondsSinceEpoch.toString();
       user = User(
-          id: id,
-          foto: fotoUrl,
-          nama: nama,
-          jenis_kelamin: jenis_kelamin,
-          email: email,
-          password: password,
-          whatsapp: whatsapp,
-          rekening: rekening,
-          poin: 0,
-          komisi: 0,
-          royalty: 0,
-          tipe: tipe);
-    } else {
-      String fotoUrl = await firestoreService.uploadFile(id, File(foto));
-      user = User(
-          id: id,
-          foto: fotoUrl != null ? fotoUrl : foto,
+          id: millis,
+          foto: await firestoreService.uploadFile(
+              'users/foto/' + millis, File(_temp_file)),
           nama: nama,
           jenis_kelamin: jenis_kelamin,
           email: email,
@@ -153,12 +154,31 @@ class UserProvider with ChangeNotifier {
           poin: poin,
           komisi: komisi,
           royalty: royalty,
-          tipe: tipe);
+          tipe: tipe,
+          leader: leader);
+    } else {
+      user = User(
+          id: id,
+          foto: temp_file != null
+              ? await firestoreService.uploadFile(
+                  'users/foto/' + id, File(temp_file))
+              : foto,
+          nama: nama,
+          jenis_kelamin: jenis_kelamin,
+          email: email,
+          password: password,
+          whatsapp: whatsapp,
+          rekening: rekening,
+          poin: poin,
+          komisi: komisi,
+          royalty: royalty,
+          tipe: tipe,
+          leader: leader);
     }
     firestoreService.saveUser(user);
   }
 
-  removeUser(String id) async {
+  remove(String id) async {
     firestoreService.removeFile(await firestoreService.getRef(foto));
     firestoreService.removeUser(id);
   }

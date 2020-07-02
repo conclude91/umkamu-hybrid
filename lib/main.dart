@@ -14,6 +14,7 @@ import 'package:umkamu/providers/franchise_provider.dart';
 import 'package:umkamu/providers/user_provider.dart';
 import 'package:umkamu/services/firestore_service.dart';
 import 'package:umkamu/utils/theme.dart';
+import 'package:umkamu/pages/franchise_detail.dart';
 
 void main() => runApp(MyApp());
 
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: appName,
-        initialRoute: Dashboard.id,
+        initialRoute: FranchiseDetail.id,
         routes: {
           SplashScreen.id: (context) => SplashScreen(),
           OnBoarding.id: (context) => OnBoarding(),
@@ -43,7 +44,10 @@ class MyApp extends StatelessWidget {
           UserForm.id: (context) =>
               UserForm(ModalRoute.of(context).settings.arguments),
           FranchiseList.id: (context) => FranchiseList(),
-          FranchiseForm.id:(context) => FranchiseForm(ModalRoute.of(context).settings.arguments),
+          FranchiseForm.id: (context) =>
+              FranchiseForm(ModalRoute.of(context).settings.arguments),
+          FranchiseDetail.id: (context) =>
+              FranchiseDetail(ModalRoute.of(context).settings.arguments),
           MyHomePage.id: (context) => MyHomePage(),
         },
       ),
