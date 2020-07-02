@@ -3,6 +3,18 @@
 <plist version="1.0">
 <dict>
 <key>NSPhotoLibraryUsageDescription</key>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+    <string>instagram-stories</string>
+    <string>facebook-stories</string>
+    <string>facebook</string>
+    <string>instagram</string>
+    <string>twitter</string>
+    <string>whatsapp</string>
+    <string>tg</string>
+    </array>
+    <key>FacebookAppID</key>
+    <string>292360518665049</string>
     <string>Upload images for screen background</string>
     <key>NSCameraUsageDescription</key>
     <string>Upload image from camera for screen background</string>

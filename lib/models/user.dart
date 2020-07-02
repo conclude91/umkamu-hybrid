@@ -13,6 +13,7 @@ class User {
   final int komisi;
   final int royalty;
   final String tipe;
+  final String leader;
 
   User({
     @required this.id,
@@ -27,6 +28,7 @@ class User {
     @required this.komisi,
     @required this.royalty,
     @required this.tipe,
+    @required this.leader,
   });
 
   Map<String, dynamic> toMap() {
@@ -34,7 +36,7 @@ class User {
       'id': id,
       'foto': foto,
       'nama': nama,
-      'jenis_kelamin':jenis_kelamin,
+      'jenis_kelamin': jenis_kelamin,
       'email': email,
       'password': password,
       'whatsapp': whatsapp,
@@ -43,6 +45,7 @@ class User {
       'komisi': komisi,
       'royalty': royalty,
       'tipe': tipe,
+      'leader': leader,
     };
   }
 
@@ -58,5 +61,6 @@ class User {
         poin = firestore['poin'],
         komisi = firestore['komisi'],
         royalty = firestore['royalty'],
-        tipe = firestore['tipe'];
+        tipe = firestore['tipe'],
+        leader = firestore['leader'];
 }

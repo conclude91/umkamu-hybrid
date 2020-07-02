@@ -1,8 +1,11 @@
 import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +26,6 @@ class UserForm extends StatefulWidget {
 class _UserFormState extends State<UserForm> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   final _namaController = TextEditingController();
-  final _jenisKelaminController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _whatsappController = TextEditingController();
@@ -31,10 +33,10 @@ class _UserFormState extends State<UserForm> {
   final _poinController = TextEditingController();
   final _komisiController = TextEditingController();
   final _royaltyController = TextEditingController();
-  var _tipeOptions = ['Customer', 'Member'];
+  var _tipeOptions = ['Konsumen', 'Produsen', 'Admin'];
   var _jenisKelaminOptions = ['Laki-Laki', 'Perempuan'];
   UserProvider _userProvider;
-  File _foto;
+  File _temp_file;
   final _picker = ImagePicker();
 
   @override
@@ -51,7 +53,7 @@ class _UserFormState extends State<UserForm> {
         _poinController.text = widget.user.poin.toString();
         _komisiController.text = widget.user.komisi.toString();
         _royaltyController.text = widget.user.royalty.toString();
-        _userProvider.setUser(widget.user);
+        _userProvider.user = widget.user;
       } else {
         _namaController.text = '';
         _emailController.text = '';
@@ -61,7 +63,13 @@ class _UserFormState extends State<UserForm> {
         _poinController.text = '0';
         _komisiController.text = '0';
         _royaltyController.text = '0';
-        _userProvider.setUser(User());
+        _userProvider.user = User();
+        _userProvider.poin = 0;
+        _userProvider.komisi = 0;
+        _userProvider.royalty = 0;
+        _userProvider.jenis_kelamin = 'Laki-Laki';
+        _userProvider.tipe = 'Konsumen';
+        _userProvider.leader = 'Tidak';
       }
     });
   }
@@ -79,7 +87,7 @@ class _UserFormState extends State<UserForm> {
     _royaltyController.dispose();
   }
 
-  getImageFile(ImageSource source) async {
+  _getImageFile(ImageSource source) async {
     final pickedFile = await _picker.getImage(source: source, imageQuality: 50);
     File croppedFile = await ImageCropper.cropImage(
         sourcePath: pickedFile.path,
@@ -97,9 +105,35 @@ class _UserFormState extends State<UserForm> {
           title: 'Edit Foto',
         ));
     setState(() {
-      _foto = croppedFile;
-      _userProvider.setFoto(_foto.path);
+      _temp_file = croppedFile;
+      _userProvider.temp_file = _temp_file.path;
     });
+  }
+
+  _showConfirmationAlert(BuildContext context) {
+    showPlatformDialog(
+      context: context,
+      builder: (_) => BasicDialogAlert(
+        title: Text("Notifikasi"),
+        content: Text("Apakah anda yakin akan menghapus data ini?\nData yang dihapus tidak bisa dipulihkan."),
+        actions: <Widget>[
+          BasicDialogAction(
+            title: Text("Batalkan"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          BasicDialogAction(
+            title: Text("Hapus"),
+            onPressed: () {
+              _userProvider.remove(widget.user.id);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -133,47 +167,58 @@ class _UserFormState extends State<UserForm> {
       ),
       body: ListView(
         children: <Widget>[
-          FormBuilder(
-            initialValue: {},
-            child: Padding(
-              padding:
-                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 10),
-              child: Column(
-                children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: widget.user != null
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/doodle-potrait.png'),
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Column(
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: CircleAvatar(
+                    backgroundImage: (widget.user != null && _temp_file == null)
                         ? CachedNetworkImageProvider(widget.user.foto)
-                        : _foto != null
-                            ? AssetImage(_foto.path)
+                        : _temp_file != null
+                            ? AssetImage(_temp_file.path)
                             : AssetImage('assets/profile.jpg'),
                     radius: 75,
                   ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.image,
-                          color: primaryContentColor,
-                        ),
-                        onPressed: () => getImageFile(ImageSource.gallery),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.image,
+                        color: primaryContentColor,
                       ),
-                      IconButton(
-                        icon: Icon(
-                          Icons.camera,
-                          color: primaryContentColor,
-                        ),
-                        onPressed: () => getImageFile(ImageSource.camera),
+                      onPressed: () => _getImageFile(ImageSource.gallery),
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.camera,
+                        color: primaryContentColor,
                       ),
-                    ],
-                  ),
-                  Divider(
-                    thickness: 1,
-                    color: primaryLightContentColor,
-                  ),
+                      onPressed: () => _getImageFile(ImageSource.camera),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          FormBuilder(
+            key: _fbKey,
+            child: Padding(
+              padding:
+                  EdgeInsets.only(left: 16, right: 16, top: 10, bottom: 10),
+              child: Column(
+                children: <Widget>[
                   FormBuilderTextField(
                     controller: _namaController,
-                    onChanged: (value) => _userProvider.setNama(value),
+                    onChanged: (value) => _userProvider.nama = value,
                     attribute: 'nama',
                     maxLines: 1,
                     maxLength: 50,
@@ -186,12 +231,13 @@ class _UserFormState extends State<UserForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(50),
+                      FormBuilderValidators.required(),
                     ],
                   ),
                   FormBuilderDropdown(
                     attribute: 'jenis_kelamin',
-                    onChanged: (value) => _userProvider.setJenisKelamin(value),
+                    onChanged: (value) =>
+                        _userProvider.jenis_kelamin = value.toString(),
                     decoration: InputDecoration(
                       labelText: 'Jenis Kelamin',
                       labelStyle: TextStyle(
@@ -200,17 +246,18 @@ class _UserFormState extends State<UserForm> {
                         fontFamily: primaryFont,
                       ),
                     ),
-                    validators: [FormBuilderValidators.required()],
                     items: _jenisKelaminOptions
-                        .map((jenis_kelamin) =>
-                        DropdownMenuItem(value: jenis_kelamin, child: Text('$jenis_kelamin')))
+                        .map((jenis_kelamin) => DropdownMenuItem(
+                            value: jenis_kelamin,
+                            child: Text('$jenis_kelamin')))
                         .toList(),
-                    initialValue:
-                    (widget.user != null) ? widget.user.jenis_kelamin : 'Laki-Laki',
+                    initialValue: (widget.user != null)
+                        ? widget.user.jenis_kelamin
+                        : 'Laki-Laki',
                   ),
                   FormBuilderTextField(
                     controller: _emailController,
-                    onChanged: (value) => _userProvider.setEmail(value),
+                    onChanged: (value) => _userProvider.email = value,
                     attribute: 'email',
                     maxLines: 1,
                     maxLength: 50,
@@ -224,13 +271,13 @@ class _UserFormState extends State<UserForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(50),
+                      FormBuilderValidators.required(),
                       FormBuilderValidators.email(),
                     ],
                   ),
                   FormBuilderTextField(
                     controller: _passwordController,
-                    onChanged: (value) => _userProvider.setPassword(value),
+                    onChanged: (value) => _userProvider.password = value,
                     attribute: 'password',
                     maxLines: 1,
                     maxLength: 50,
@@ -243,12 +290,12 @@ class _UserFormState extends State<UserForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(50),
+                      FormBuilderValidators.required(),
                     ],
                   ),
                   FormBuilderTextField(
                     controller: _whatsappController,
-                    onChanged: (value) => _userProvider.setWhatsapp(value),
+                    onChanged: (value) => _userProvider.whatsapp = value,
                     attribute: 'whatsapp',
                     maxLines: 1,
                     maxLength: 15,
@@ -262,13 +309,13 @@ class _UserFormState extends State<UserForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(15),
+                      FormBuilderValidators.required(),
                       FormBuilderValidators.numeric(),
                     ],
                   ),
                   FormBuilderTextField(
                     controller: _rekeningController,
-                    onChanged: (value) => _userProvider.setRekening(value),
+                    onChanged: (value) => _userProvider.rekening = value,
                     attribute: 'rekening',
                     maxLines: 1,
                     maxLength: 15,
@@ -282,13 +329,13 @@ class _UserFormState extends State<UserForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(15),
+                      FormBuilderValidators.required(),
                       FormBuilderValidators.numeric(),
                     ],
                   ),
                   FormBuilderTextField(
                     controller: _poinController,
-                    onChanged: (value) => _userProvider.setPoin(int.parse(value)),
+                    onChanged: (value) => _userProvider.poin = int.parse(value),
                     attribute: 'poin',
                     maxLines: 1,
                     maxLength: 15,
@@ -302,13 +349,15 @@ class _UserFormState extends State<UserForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(15),
+                      FormBuilderValidators.required(),
+                      FormBuilderValidators.max(20000),
                       FormBuilderValidators.numeric(),
                     ],
                   ),
                   FormBuilderTextField(
                     controller: _komisiController,
-                    onChanged: (value) => _userProvider.setKomisi(int.parse(value)),
+                    onChanged: (value) =>
+                        _userProvider.komisi = int.parse(value),
                     attribute: 'komisi',
                     maxLines: 1,
                     maxLength: 15,
@@ -322,13 +371,14 @@ class _UserFormState extends State<UserForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(15),
+                      FormBuilderValidators.required(),
                       FormBuilderValidators.numeric(),
                     ],
                   ),
                   FormBuilderTextField(
                     controller: _royaltyController,
-                    onChanged: (value) => _userProvider.setRoyalty(int.parse(value)),
+                    onChanged: (value) =>
+                        _userProvider.royalty = int.parse(value),
                     attribute: 'royalty',
                     maxLines: 1,
                     maxLength: 15,
@@ -342,13 +392,13 @@ class _UserFormState extends State<UserForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(15),
+                      FormBuilderValidators.required(),
                       FormBuilderValidators.numeric(),
                     ],
                   ),
                   FormBuilderDropdown(
                     attribute: 'tipe',
-                    onChanged: (value) => _userProvider.setTipe(value),
+                    onChanged: (value) => _userProvider.tipe = value.toString(),
                     decoration: InputDecoration(
                       labelText: 'Tipe',
                       labelStyle: TextStyle(
@@ -363,7 +413,24 @@ class _UserFormState extends State<UserForm> {
                             DropdownMenuItem(value: tipe, child: Text('$tipe')))
                         .toList(),
                     initialValue:
-                        (widget.user != null) ? widget.user.tipe : 'Customer',
+                        (widget.user != null) ? widget.user.tipe : 'Konsumen',
+                  ),
+                  FormBuilderRadioGroup(
+                    attribute: 'leader',
+                    decoration: InputDecoration(labelText: 'Leader'),
+                    onChanged: (value) =>
+                        _userProvider.leader = value.toString(),
+                    options: [
+                      FormBuilderFieldOption(
+                        value: 'Ya',
+                      ),
+                      FormBuilderFieldOption(
+                        value: 'Tidak',
+                      ),
+                    ],
+                    initialValue:
+                        (widget.user != null) ? widget.user.leader : 'Tidak',
+                    validators: [FormBuilderValidators.required()],
                   ),
                 ],
               ),
@@ -385,36 +452,50 @@ class _UserFormState extends State<UserForm> {
                 ),
               ),
               onPressed: () {
-                _userProvider.saveUser();
-                Navigator.of(context).pop();
-                /*if (_fbKey.currentState.saveAndValidate()) {
+                if (_fbKey.currentState.saveAndValidate() &&
+                    (_temp_file != null || widget.user != null)) {
+                  _userProvider.save();
+                  Navigator.of(context).pop();
+                } else {
                   print(_fbKey.currentState.value);
-                }*/
+                  Fluttertoast.showToast(
+                      msg: 'Inputan data belum lengkap',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: primaryContentColor.withOpacity(0.5),
+                      textColor: secondaryContentColor,
+                      fontSize: tinySize);
+                }
               },
               height: 50,
               minWidth: double.infinity,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-            child: MaterialButton(
-              color: primaryColor,
-              child: Text(
-                'Hapus',
-                style: TextStyle(
-                  fontFamily: primaryFont,
-                  fontSize: smallSize,
-                  color: secondaryContentColor,
+          (widget.user != null)
+              ? Padding(
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  child: MaterialButton(
+                    color: primaryColor,
+                    height: 50,
+                    minWidth: double.infinity,
+                    child: Text(
+                      'Hapus',
+                      style: TextStyle(
+                        fontFamily: primaryFont,
+                        fontSize: smallSize,
+                        color: secondaryContentColor,
+                      ),
+                    ),
+                    onPressed: () {
+                      _showConfirmationAlert(context);
+                    },
+                  ),
+                )
+              : SizedBox(
+                  height: 5,
                 ),
-              ),
-              onPressed: () {
-                _userProvider.removeUser(widget.user.id);
-                Navigator.of(context).pop();
-              },
-              height: 50,
-              minWidth: double.infinity,
-            ),
-          ),
         ],
       ),
     );

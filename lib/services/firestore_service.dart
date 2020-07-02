@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:umkamu/models/franchise.dart';
@@ -26,6 +27,17 @@ class FirestoreService {
         .toList());
   }
 
+  Stream<List<User>> getAllUserLeader() {
+    return _db
+        .collection('users')
+        .where('leader', isEqualTo: 'Tidak')
+        .where('jenis_kelamin', isEqualTo: 'Laki-Laki')
+        .snapshots()
+        .map((snapshot) => snapshot.documents
+            .map((document) => User.fromFirestore(document.data))
+            .toList());
+  }
+
   Stream<List<Franchise>> getAllFranchise() {
     return _db.collection('franchises').snapshots().map((snapshot) => snapshot
         .documents
@@ -41,8 +53,8 @@ class FirestoreService {
     return _db.collection('franchises').document(id).delete();
   }
 
-  Future<String> uploadFile(String name, File file) async {
-    StorageReference ref = _storage.ref().child('users/foto/' + name);
+  Future<String> uploadFile(String path, File file) async {
+    StorageReference ref = _storage.ref().child(path);
     StorageUploadTask uploadTask = ref.putFile(file);
 
     var url = await (await uploadTask.onComplete).ref.getDownloadURL();

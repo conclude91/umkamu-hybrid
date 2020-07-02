@@ -1,6 +1,13 @@
+import 'dart:io';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:umkamu/models/franchise.dart';
 import 'package:umkamu/providers/franchise_provider.dart';
@@ -17,17 +24,17 @@ class FranchiseForm extends StatefulWidget {
 }
 
 class _FranchiseFormState extends State<FranchiseForm> {
-//  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
+  final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   final _namaController = TextEditingController();
   final _kotaController = TextEditingController();
   final _deskripsiController = TextEditingController();
   final _whatsappController = TextEditingController();
-
   FranchiseProvider _franchiseProvider;
   var _kategoriOptions = ['Jajanan', 'Oleh-Oleh', 'Antaran'];
-
-  /*File _foto;
-  final _picker = ImagePicker();*/
+  File _temp_file1, _temp_file2, _temp_file3;
+  final _picker = ImagePicker();
+  double _screenWidth, _screenHeight;
+  Size _size;
 
   @override
   void initState() {
@@ -40,13 +47,16 @@ class _FranchiseFormState extends State<FranchiseForm> {
         _kotaController.text = widget.franchise.kota;
         _deskripsiController.text = widget.franchise.deskripsi;
         _whatsappController.text = widget.franchise.whatsapp;
-        _franchiseProvider.setFranchise(widget.franchise);
+        _franchiseProvider.franchise = widget.franchise;
       } else {
         _namaController.text = '';
         _kotaController.text = '';
         _deskripsiController.text = '';
         _whatsappController.text = '';
-        _franchiseProvider.setFranchise(Franchise());
+        _franchiseProvider.franchise = Franchise();
+        _franchiseProvider.kategori = 'Jajanan';
+        _franchiseProvider.id =
+            DateTime.now().millisecondsSinceEpoch.toString();
       }
     });
   }
@@ -60,13 +70,13 @@ class _FranchiseFormState extends State<FranchiseForm> {
     _whatsappController.dispose();
   }
 
-  /*getImageFile(ImageSource source) async {
+  _getImageFile1(ImageSource source) async {
     final pickedFile = await _picker.getImage(source: source, imageQuality: 50);
     File croppedFile = await ImageCropper.cropImage(
         sourcePath: pickedFile.path,
-        maxWidth: 500,
+        maxWidth: 1000,
         maxHeight: 500,
-        aspectRatio: CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
+        aspectRatio: CropAspectRatio(ratioX: 2.0, ratioY: 1.0),
         androidUiSettings: AndroidUiSettings(
             toolbarTitle: 'Edit Foto',
             toolbarColor: backgroundColor,
@@ -78,13 +88,89 @@ class _FranchiseFormState extends State<FranchiseForm> {
           title: 'Edit Foto',
         ));
     setState(() {
-      _foto = croppedFile;
-      _franchiseProvider.setFoto(_foto.path);
+      _temp_file1 = croppedFile;
+      _franchiseProvider.temp_file1 = _temp_file1.path;
     });
-  }*/
+  }
+
+  _getImageFile2(ImageSource source) async {
+    final pickedFile = await _picker.getImage(source: source, imageQuality: 50);
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: pickedFile.path,
+        maxWidth: 1000,
+        maxHeight: 500,
+        aspectRatio: CropAspectRatio(ratioX: 2.0, ratioY: 1.0),
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Edit Foto',
+            toolbarColor: backgroundColor,
+            toolbarWidgetColor: primaryContentColor,
+            statusBarColor: primaryColor,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: true),
+        iosUiSettings: IOSUiSettings(
+          title: 'Edit Foto',
+        ));
+    setState(() {
+      _temp_file2 = croppedFile;
+      _franchiseProvider.temp_file2 = _temp_file2.path;
+    });
+  }
+
+  _getImageFile3(ImageSource source) async {
+    final pickedFile = await _picker.getImage(source: source, imageQuality: 50);
+    File croppedFile = await ImageCropper.cropImage(
+        sourcePath: pickedFile.path,
+        maxWidth: 1000,
+        maxHeight: 500,
+        aspectRatio: CropAspectRatio(ratioX: 2.0, ratioY: 1.0),
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Edit Foto',
+            toolbarColor: backgroundColor,
+            toolbarWidgetColor: primaryContentColor,
+            statusBarColor: primaryColor,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: true),
+        iosUiSettings: IOSUiSettings(
+          title: 'Edit Foto',
+        ));
+    setState(() {
+      _temp_file3 = croppedFile;
+      _franchiseProvider.temp_file3 = _temp_file3.path;
+    });
+  }
+
+  _showConfirmationAlert(BuildContext context) {
+    showPlatformDialog(
+      context: context,
+      builder: (_) => BasicDialogAlert(
+        title: Text("Hapus Data Ini ?"),
+        content: Text("Data yang dihapus tidak bisa dipulihkan."),
+        actions: <Widget>[
+          BasicDialogAction(
+            title: Text("Batalkan"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          BasicDialogAction(
+            title: Text("Hapus"),
+            onPressed: () {
+              _franchiseProvider.remove(widget.franchise.id);
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    _size = MediaQuery.of(context).size;
+    _screenWidth = _size.width;
+    _screenHeight = _size.height;
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -115,33 +201,130 @@ class _FranchiseFormState extends State<FranchiseForm> {
       body: ListView(
         children: <Widget>[
           FormBuilder(
+            key: _fbKey,
             initialValue: {},
             child: Padding(
               padding:
                   EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 10),
               child: Column(
                 children: <Widget>[
-                  FormBuilderImagePicker(
-                    attribute: 'images',
-                    decoration: InputDecoration(
-                      labelText: 'Foto',
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Foto 1 : ',
+                          style: TextStyle(
+                              fontFamily: primaryFont,
+                              color: primaryContentColor,
+                              fontSize: smallSize),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        InkWell(
+                          child: Container(
+                            width: _screenWidth,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: (widget.franchise != null &&
+                                        _temp_file1 == null)
+                                    ? CachedNetworkImageProvider(
+                                        widget.franchise.foto1)
+                                    : (_temp_file1 != null)
+                                        ? AssetImage(_temp_file1.path)
+                                        : AssetImage('assets/images/photo.png'),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          onTap: () => _getImageFile1(ImageSource.gallery),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                      ],
                     ),
-                    maxImages: 3,
-                    iconColor: primaryColor,
-                    // readOnly: true,
-                    validators: [
-                      FormBuilderValidators.required(),
-                      (images) {
-                        if (images.length < 2) {
-                          return 'Two or more images required.';
-                        }
-                        return null;
-                      }
-                    ],
+                  ),
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Foto 2 : ',
+                          style: TextStyle(
+                              fontFamily: primaryFont,
+                              color: primaryContentColor,
+                              fontSize: smallSize),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        InkWell(
+                          child: Container(
+                            width: _screenWidth,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: (widget.franchise != null &&
+                                        _temp_file2 == null)
+                                    ? CachedNetworkImageProvider(
+                                        widget.franchise.foto2)
+                                    : (_temp_file2 != null)
+                                        ? AssetImage(_temp_file2.path)
+                                        : AssetImage('assets/images/photo.png'),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          onTap: () => _getImageFile2(ImageSource.gallery),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          'Foto 3 : ',
+                          style: TextStyle(
+                              fontFamily: primaryFont,
+                              color: primaryContentColor,
+                              fontSize: smallSize),
+                        ),
+                        SizedBox(
+                          height: 15,
+                        ),
+                        InkWell(
+                          child: Container(
+                            width: _screenWidth,
+                            height: 200,
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                image: (widget.franchise != null &&
+                                        _temp_file3 == null)
+                                    ? CachedNetworkImageProvider(
+                                        widget.franchise.foto3)
+                                    : (_temp_file3 != null)
+                                        ? AssetImage(_temp_file3.path)
+                                        : AssetImage('assets/images/photo.png'),
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ),
+                          onTap: () => _getImageFile3(ImageSource.gallery),
+                        ),
+                      ],
+                    ),
                   ),
                   FormBuilderTextField(
                     controller: _namaController,
-                    onChanged: (value) => _franchiseProvider.setNama(value),
+                    onChanged: (value) => _franchiseProvider.nama = value,
                     attribute: 'nama',
                     maxLines: 1,
                     maxLength: 50,
@@ -154,12 +337,12 @@ class _FranchiseFormState extends State<FranchiseForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(50),
+                      FormBuilderValidators.required(),
                     ],
                   ),
                   FormBuilderTextField(
                     controller: _kotaController,
-                    onChanged: (value) => _franchiseProvider.setKota(value),
+                    onChanged: (value) => _franchiseProvider.kota = value,
                     attribute: 'kota',
                     maxLines: 1,
                     maxLength: 50,
@@ -172,13 +355,12 @@ class _FranchiseFormState extends State<FranchiseForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(50),
+                      FormBuilderValidators.required(),
                     ],
                   ),
                   FormBuilderTextField(
                     controller: _deskripsiController,
-                    onChanged: (value) =>
-                        _franchiseProvider.setDeskripsi(value),
+                    onChanged: (value) => _franchiseProvider.deskripsi = value,
                     attribute: 'deskripsi',
                     maxLines: 5,
                     maxLength: 350,
@@ -191,12 +373,12 @@ class _FranchiseFormState extends State<FranchiseForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(350),
+                      FormBuilderValidators.required(),
                     ],
                   ),
                   FormBuilderTextField(
                     controller: _whatsappController,
-                    onChanged: (value) => _franchiseProvider.setWhatsapp(value),
+                    onChanged: (value) => _franchiseProvider.whatsapp = value,
                     attribute: 'whatsapp',
                     maxLines: 1,
                     maxLength: 15,
@@ -210,13 +392,13 @@ class _FranchiseFormState extends State<FranchiseForm> {
                       ),
                     ),
                     validators: [
-                      FormBuilderValidators.max(15),
+                      FormBuilderValidators.required(),
                       FormBuilderValidators.numeric(),
                     ],
                   ),
                   FormBuilderDropdown(
                     attribute: 'kategori',
-                    onChanged: (value) => _franchiseProvider.setKategori(value),
+                    onChanged: (value) => _franchiseProvider.kategori = value,
                     decoration: InputDecoration(
                       labelText: 'Kategori',
                       labelStyle: TextStyle(
@@ -254,36 +436,53 @@ class _FranchiseFormState extends State<FranchiseForm> {
                 ),
               ),
               onPressed: () {
-                _franchiseProvider.saveFranchise();
-                Navigator.of(context).pop();
-                /*if (_fbKey.currentState.saveAndValidate()) {
+                if (_fbKey.currentState.saveAndValidate() &&
+                    ((_temp_file1 != null &&
+                            _temp_file2 != null &&
+                            _temp_file3 != null) ||
+                        widget.franchise != null)) {
+                  _franchiseProvider.save();
+                  Navigator.of(context).pop();
+                } else {
                   print(_fbKey.currentState.value);
-                }*/
+                  Fluttertoast.showToast(
+                      msg: 'Inputan data belum lengkap',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: primaryContentColor.withOpacity(0.5),
+                      textColor: secondaryContentColor,
+                      fontSize: tinySize);
+                }
               },
               height: 50,
               minWidth: double.infinity,
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-            child: MaterialButton(
-              color: primaryColor,
-              child: Text(
-                'Hapus',
-                style: TextStyle(
-                  fontFamily: primaryFont,
-                  fontSize: smallSize,
-                  color: secondaryContentColor,
+          (widget.franchise != null)
+              ? Padding(
+                  padding:
+                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  child: MaterialButton(
+                    color: primaryColor,
+                    child: Text(
+                      'Hapus',
+                      style: TextStyle(
+                        fontFamily: primaryFont,
+                        fontSize: smallSize,
+                        color: secondaryContentColor,
+                      ),
+                    ),
+                    onPressed: () {
+                      _showConfirmationAlert(context);
+                    },
+                    height: 50,
+                    minWidth: double.infinity,
+                  ),
+                )
+              : SizedBox(
+                  height: 5,
                 ),
-              ),
-              onPressed: () {
-                _franchiseProvider.removeFranchise(widget.franchise.id);
-                Navigator.of(context).pop();
-              },
-              height: 50,
-              minWidth: double.infinity,
-            ),
-          ),
         ],
       ),
     );
