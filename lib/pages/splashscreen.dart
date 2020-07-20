@@ -1,7 +1,11 @@
 import 'dart:async';
-import 'package:flutter/material.dart';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:umkamu/pages/dashboard.dart';
 import 'package:umkamu/pages/onboarding.dart';
+import 'package:umkamu/utils/constanta.dart';
 import 'package:umkamu/utils/theme.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -14,16 +18,21 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Timer _timer;
 
-  authenticate() async {
+  _authenticate() async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
     return _timer = Timer(Duration(seconds: 5), () {
-      Navigator.of(context).pushReplacementNamed(OnBoarding.id);
+      if (sharedPreferences.getBool('isLogin') ?? false) {
+        Navigator.of(context).pushReplacementNamed(Dashboard.id);
+      } else {
+        Navigator.of(context).pushReplacementNamed(OnBoarding.id);
+      }
     });
   }
 
   @override
   void initState() {
     super.initState();
-    authenticate();
+    _authenticate();
   }
 
   @override
@@ -61,10 +70,10 @@ class _SplashScreenState extends State<SplashScreen> {
                 left: 40.0, right: 40.0, top: 10.0, bottom: 20.0),
             alignment: Alignment.bottomCenter,
             child: Text(
-              "umkamu @ 2020",
+              copyright,
               style: TextStyle(
                 color: primaryContentColor,
-                fontSize: tinySize,
+                fontSize: microSize,
                 fontFamily: primaryFont,
               ),
             ),

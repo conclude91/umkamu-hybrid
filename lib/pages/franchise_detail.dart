@@ -3,14 +3,21 @@ import 'dart:io';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:http/http.dart' show get;
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_share/social_share.dart';
 import 'package:umkamu/models/franchise.dart';
+import 'package:umkamu/models/user.dart';
 import 'package:umkamu/providers/franchise_provider.dart';
+import 'package:umkamu/providers/user_provider.dart';
+import 'package:umkamu/utils/constanta.dart';
 import 'package:umkamu/utils/theme.dart';
-import 'package:http/http.dart' show get;
 
 class FranchiseDetail extends StatefulWidget {
   static const String id = 'franchisedetail';
@@ -23,17 +30,16 @@ class FranchiseDetail extends StatefulWidget {
 }
 
 class _FranchiseDetailState extends State<FranchiseDetail> {
-  int _current = 0;
+  UserProvider _userProvider;
   FranchiseProvider _franchiseProvider;
-  double _screenWidth, _screenHeight;
-  Size _size;
-  String imageData;
-  bool dataLoaded = false;
+  List<NetworkImage> _listImage;
+  String _imageData;
+  String _idUser;
 
   @override
   void initState() {
     super.initState();
-    _franchiseProvider = Provider.of<FranchiseProvider>(context, listen: false);
+    _getPreferences();
   }
 
   @override
@@ -50,17 +56,96 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
     File file = new File(filePathAndName);
     file.writeAsBytesSync(response.bodyBytes);
     setState(() {
-      imageData = filePathAndName;
-      dataLoaded = true;
+      _imageData = filePathAndName;
     });
-    return imageData;
+    return _imageData;
+  }
+
+  _setImageList() {
+    setState(() {
+      _listImage = [
+        NetworkImage(_franchiseProvider.foto1),
+        NetworkImage(_franchiseProvider.foto3),
+        NetworkImage(_franchiseProvider.foto1),
+      ];
+    });
+  }
+
+  _showConfirmationAlert(
+      BuildContext context, String contact, String title, String msg) {
+    showPlatformDialog(
+      context: context,
+      builder: (_) => BasicDialogAlert(
+        title: Text(
+          title,
+          style: TextStyle(
+              fontFamily: primaryFont,
+              fontSize: mediumSize,
+              color: primaryContentColor),
+        ),
+        content: Text(
+          msg,
+          style: TextStyle(
+              fontFamily: primaryFont,
+              fontSize: tinySize,
+              color: primaryContentColor),
+        ),
+        actions: <Widget>[
+          BasicDialogAction(
+            title: Text("Batalkan"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          BasicDialogAction(
+            title: Text("Teruskan"),
+            onPressed: () {
+              FlutterOpenWhatsapp.sendSingleMessage(
+                  contact, msg + _getIdentityMessage());
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  _getIdentityMessage() {
+    return '\n\nBerikut data diri saya :\n\nNama : ' +
+        _userProvider.nama +
+        '\nID : ' +
+        _userProvider.id +
+        '\nRekening : ' +
+        _userProvider.rekening;
+  }
+
+  _getPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _idUser = prefs.getString('id') ?? '';
+    });
+  }
+
+  _replaceCharAt(String oldString, int index, String newChar) {
+    return oldString.substring(0, index) +
+        newChar +
+        oldString.substring(index + 1);
   }
 
   @override
   Widget build(BuildContext context) {
-    _size = MediaQuery.of(context).size;
-    _screenWidth = _size.width;
-    _screenHeight = _size.height;
+    _userProvider = Provider.of<UserProvider>(context);
+    _franchiseProvider = Provider.of<FranchiseProvider>(context);
+    var _listFranchise = Provider.of<List<Franchise>>(context)
+        .where((franchise) => franchise.id == widget.franchise.id)
+        .toList();
+    var _listUser = Provider.of<List<User>>(context)
+        .where((user) => user.id == _idUser)
+        .toList();
+    _userProvider.user = _listUser.length > 0 ? _listUser[0] : null;
+    _franchiseProvider.franchise =
+        _listFranchise.length > 0 ? _listFranchise[0] : null;
+    _setImageList();
 
     return Scaffold(
       appBar: AppBar(
@@ -68,7 +153,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          'Franchise',
+          _franchiseProvider.nama,
           style: TextStyle(
             color: primaryContentColor,
             fontSize: mediumSize,
@@ -95,23 +180,15 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
             children: <Widget>[
               SizedBox(
                 height: 200,
-                width: _screenWidth,
+                width: MediaQuery.of(context).size.width,
                 child: Carousel(
-                  images: [
-                    NetworkImage(
-                        'https://non-indonesia-distribution.brta.in/2019-01/36c49e263ba2607cf4ff29c9b7739075bf595128.jpg'),
-                    NetworkImage(
-                        'https://balitribune.co.id/sites/default/files/styles/xtra_large/public/field/image/Orang%20Eropa%20Doyan%20Makanan%20Indonesia.jpg?itok=KhyFFbAs'),
-                    NetworkImage(
-                        'https://blog.cakap.com/wp-content/uploads/2019/03/food-feature.jpg'),
-                    //ExactAssetImage("assets/images/LaunchImage.jpg")
-                  ],
+                  images: _listImage,
                   dotSize: 3.0,
                   dotSpacing: 15.0,
                   dotColor: secondaryContentColor,
                   indicatorBgPadding: 5.0,
                   dotBgColor: transparent,
-                  borderRadius: true,
+//                  borderRadius: true,
                 ),
               ),
               Column(
@@ -121,7 +198,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                   Align(
                     alignment: Alignment.topLeft,
                     child: Text(
-                      'Rumah Makan Nyampleng',
+                      _franchiseProvider.nama,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -132,7 +209,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 10),
                   Row(
                     children: <Widget>[
                       Icon(
@@ -142,7 +219,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                       ),
                       SizedBox(width: 5),
                       Text(
-                        'Malang',
+                        _franchiseProvider.kota,
                         style: TextStyle(
                           color: primaryContentColor,
                           fontSize: smallSize,
@@ -151,84 +228,204 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 15),
                   SizedBox(
                     height: 25,
-                    width: _screenWidth,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    width: MediaQuery.of(context).size.width,
+                    child: Stack(
                       children: <Widget>[
-                        InkWell(
-                          child: Image(
-                            image: NetworkImage(
-                                'https://infiny.co.id/img/logo/facebook.png'),
-                          ),
-                          onTap: () async {
-                            SocialShare.shareFacebookStory(
-                                await _getFileFromURL('https://firebasestorage.googleapis.com/v0/b/umkamu-b4a41.appspot.com/o/franchise%2Ffoto%2F1593375516616_foto1?alt=media&token=00aa2b89-5204-4e61-b388-eb7a8cd00c7b'),
-                                primaryColorHex,
-                                primaryColorHex,
-                                'https://pub.dev/packages/image_downloader',
-                                appId: '292360518665049');
-                          },
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        InkWell(
-                          child: Image(
-                            image: NetworkImage(
-                                'https://pluspng.com/img-png/instagram-png-instagram-png-logo-1455.png'),
-                          ),
-                          onTap: () async {
-                            PickedFile pickedFile = await ImagePicker()
-                                .getImage(source: ImageSource.gallery);
-                            SocialShare.shareInstagramStory(
-                                    pickedFile.path,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: <Widget>[
+                            InkWell(
+                              child: Image(
+                                image: ExactAssetImage(
+                                    'assets/images/facebook.png'),
+                              ),
+                              onTap: () async {
+                                SocialShare.shareFacebookStory(
+                                    await _getFileFromURL(
+                                        _franchiseProvider.foto1),
                                     primaryColorHex,
                                     primaryColorHex,
-                                    'https://api.whatsapp.com/send?phone=15551234567')
-                                .then((data) {
-                              print(data);
-                            });
-                          },
+                                    'https://api.whatsapp.com/send?phone=' +
+                                        adminContact +
+                                        '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
+                                        Uri.encodeComponent(
+                                            _franchiseProvider.nama) +
+                                        '%20.%0A%0AID%20Referral%20%20%3A%20' +
+                                        _userProvider.id,
+                                    appId: '292360518665049');
+                                if (_userProvider.poin >= 15000) {
+                                  _userProvider.poin = 0;
+                                } else {
+                                  _userProvider.poin = _userProvider.poin + 1;
+                                }
+                                _userProvider.save();
+                              },
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            InkWell(
+                              child: Image(
+                                image: ExactAssetImage(
+                                    'assets/images/instagram.png'),
+                              ),
+                              onTap: () async {
+                                SocialShare.shareInstagramStory(
+                                        await _getFileFromURL(
+                                            _franchiseProvider.foto1),
+                                        primaryColorHex,
+                                        primaryColorHex,
+                                        'https://api.whatsapp.com/send?phone=' +
+                                            adminContact +
+                                            '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
+                                            Uri.encodeComponent(
+                                                _franchiseProvider.nama) +
+                                            '%20.%0A%0AID%20Referral%20%20%3A%20' +
+                                            _userProvider.id)
+                                    .then((data) {
+                                  print(data);
+                                });
+                                if (_userProvider.poin >= 15000) {
+                                  _userProvider.poin = 0;
+                                } else {
+                                  _userProvider.poin = _userProvider.poin + 1;
+                                }
+                                _userProvider.save();
+                              },
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            InkWell(
+                              child: Image(
+                                image: ExactAssetImage(
+                                    'assets/images/twitter.webp'),
+                              ),
+                              onTap: () async {
+                                SocialShare.shareTwitter(
+                                    'Ingin membuka usaha ini dengan mudah ? Klik link di bawah ini :',
+                                    hashtags: [
+                                      appName,
+                                      _franchiseProvider.nama,
+                                      'bisnis',
+                                      'usaha'
+                                    ],
+                                    url: 'https://api.whatsapp.com/send?phone=' +
+                                        adminContact +
+                                        '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
+                                        Uri.encodeComponent(
+                                            _franchiseProvider.nama) +
+                                        '%20.%0A%0AID%20Referral%20%20%3A%20' +
+                                        _userProvider.id);
+                                if (_userProvider.poin >= 15000) {
+                                  _userProvider.poin = 0;
+                                } else {
+                                  _userProvider.poin = _userProvider.poin + 1;
+                                }
+                                _userProvider.save();
+                              },
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            InkWell(
+                              child: Image(
+                                image: ExactAssetImage(
+                                    'assets/images/whatsapp.png'),
+                              ),
+                              onTap: () {
+                                SocialShare.shareWhatsapp(
+                                        'https://api.whatsapp.com/send?phone=' +
+                                            adminContact +
+                                            '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
+                                            Uri.encodeComponent(
+                                                _franchiseProvider.nama) +
+                                            '%20.%0A%0AID%20Referral%20%20%3A%20' +
+                                            _userProvider.id)
+                                    .then((data) {
+                                  print(data);
+                                });
+                                if (_userProvider.poin >= 15000) {
+                                  _userProvider.poin = 0;
+                                } else {
+                                  _userProvider.poin = _userProvider.poin + 1;
+                                }
+                                _userProvider.save();
+                              },
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                          ],
                         ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        InkWell(
-                          child: Image(
-                            image: NetworkImage(
-                                'https://cdn4.iconfinder.com/data/icons/social-media-icons-the-circle-set/48/twitter_circle-512.png'),
-                          ),
-                          onTap: () async {
-                            SocialShare.shareSms(
-                                    "This is Social Share Sms example",
-                                    url: "\nhttps://google.com/",
-                                    trailingText: "\nhello")
-                                .then((data) {
-                              print(data);
-                            });
-                          },
-                        ),
-                        SizedBox(
-                          width: 15,
-                        ),
-                        InkWell(
-                          child: Image(
-                            image: NetworkImage(
-                                'https://pngimg.com/uploads/whatsapp/whatsapp_PNG21.png'),
-                          ),
-                          onTap: () {
-                            SocialShare.shareWhatsapp(
-                                    "Hello World \n https://google.com")
-                                .then((data) {
-                              print(data);
-                            });
-                          },
-                        ),
-                        SizedBox(
-                          width: 5,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: <Widget>[
+                            InkWell(
+                              child: Image(
+                                image:
+                                    ExactAssetImage('assets/images/copy.png'),
+                              ),
+                              onTap: () {
+                                Clipboard.setData(ClipboardData(
+                                    text: 'https://api.whatsapp.com/send?phone=' +
+                                        adminContact +
+                                        '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
+                                        Uri.encodeComponent(
+                                            _franchiseProvider.nama) +
+                                        '%20.%0A%0AID%20Referral%20%20%3A%20' +
+                                        _userProvider.id));
+                                Fluttertoast.showToast(
+                                    msg: 'Share Link : (Copied)',
+                                    toastLength: Toast.LENGTH_SHORT,
+                                    gravity: ToastGravity.BOTTOM,
+                                    timeInSecForIosWeb: 1,
+                                    backgroundColor:
+                                        primaryContentColor.withOpacity(0.5),
+                                    textColor: secondaryContentColor,
+                                    fontSize: microSize);
+                              },
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            InkWell(
+                              child: Image(
+                                image: ExactAssetImage(
+                                    'assets/images/message.png'),
+                              ),
+                              onTap: () {
+                                SocialShare.shareSms(
+                                        "Tertarik dengan usaha seperti ini ? Jika tertarik klik tautan di bawah ini untuk informasi lebih lanjut :\n\n",
+                                        url: 'https://api.whatsapp.com/send?phone=' +
+                                            adminContact +
+                                            '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
+                                            Uri.encodeComponent(
+                                                _franchiseProvider.nama) +
+                                            '%20.%0A%0AID%20Referral%20%20%3A%20' +
+                                            _userProvider.id,
+                                        trailingText:
+                                            '\n\n* Pesan ini di dukung oleh ' +
+                                                appName +
+                                                '.')
+                                    .then((data) {
+                                  print(data);
+                                });
+                                if (_userProvider.poin >= 15000) {
+                                  _userProvider.poin = 0;
+                                } else {
+                                  _userProvider.poin = _userProvider.poin + 1;
+                                }
+                                _userProvider.save();
+                              },
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                          ],
                         ),
                       ],
                     ),
@@ -245,12 +442,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                 child: RichText(
                   textAlign: TextAlign.justify,
                   text: TextSpan(
-                    text:
-                        'Rumah makan \"Nyampleng\" TERLETAK di sebelah selatan alun-alun Kota Malang. Rumah makan ini TERKENAL dengan masakan tradisionalnya. Nama rumah makan ini BERASAL dari bahasa Jawa yaitu nyamleng yang berarti enak sekali. Sesuai dengan namanya rumah makan ini menyediakan masakan Jawa dengan cita rasa tinggi. Bangunan rumah makan ini beraksitektur Jawa. HAMPIR semua peralatan dan ornamen di rumah makan ini BERHIASKAN dengan nuansa Jawa.'
-                        '\n\nMemasuki rumah makan ini, kita disambut gapura bernuansa Jawa yang berdiri kokoh di pintu masuk. Di bagian DEPAN rumah makan ini terpasang gapura yang indah bertuliskan huruf Jawa dengan warna alami. Begitu memasuki pintu utama kita akan disambut ruangan yang sejuk dengan estetika tinggi. Lantai rumah makan ini terbuat dari kayu berwarna coklat tua. Dinding berwarna putih bersih. Hiasan etnik Jawa ditata melengkung INDAH di SETIAP dinding ruangan. Warna keemasan dipilih untuk menunjukkan kebesaran tempat ini. Hiasan batik sogan yang MENEMPEL pada bagian DALAM dinding menambah kekentalan suasana tradisi Jawa.'
-                        '\n\nDi DALAM rumah makan ini diletakkan gamelan Jawa yang tertata rapi lengkap dengan niyaganya. Warna gamelan keemasan dengan bingkai kayu warna coklat gelap sangat ANTIK dan MENARIK. Di samping gamelan di tata meja kursi antik dengan warna legam. Di pojok ruangan diletakkan lampu hias coklat dengan ornamen kuning keemasan.'
-                        '\n\nDi bagian BELAKANG terdapat kolam ikan nila. Warna merah yang mendominasi kolam nampak seperti kain indah yang sedang dimainkan seorang penari. Kolam itu tidak terlalu luas, tetapi BERSIH. Di pinggir kolam dihias beragam bunga. Warna warni bunga dengan SEMERBAK wanginya menambah keasrian rumah makan ini.'
-                        '\n\nAroma gorengan tempe merambah semua ruangan. Gurihnya aroma tempe tergambar dari bau yang ditimbulkannya. AROMA sambal terasinya juga merangsang orang segera mencicipinya. Alunan lagu Jawa yang syahdu menambah SELERA penyet tempe yang telah dihidangkan di atas meja.',
+                    text: _franchiseProvider.deskripsi,
                     style: TextStyle(
                       color: primaryContentColor,
                       fontSize: microSize,
@@ -286,7 +478,15 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                 fontWeight: fontBold),
                           ),
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          _showConfirmationAlert(
+                              context,
+                              adminContact,
+                              'Berminat bergabung dengan usaha ini ?',
+                              'Hai Admin\n\nSaya berminat bergabung dengan bisnis Franchise : ' +
+                                  _franchiseProvider.nama +
+                                  '.');
+                        },
                       ),
                     ),
                   ),
@@ -312,7 +512,16 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                 fontWeight: fontBold),
                           ),
                         ),
-                        onTap: () {},
+                        onTap: () {
+                          _showConfirmationAlert(
+                              context,
+                              _replaceCharAt(
+                                  _franchiseProvider.whatsapp, 0, '+62'),
+                              'Ingin tahu lebih lanjut mengenai usaha ini ?',
+                              'Hai Owner\n\nSaya tertarik ingin tau lebih lanjut mengenai Franchise : ' +
+                                  _franchiseProvider.nama +
+                                  '. Bolehkan saya berkonsultasi ? Ada beberapa hal yang ingin saya tanyakan.');
+                        },
                       ),
                     ),
                   ),

@@ -5,13 +5,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:umkamu/models/user.dart';
 import 'package:umkamu/providers/user_provider.dart';
 import 'package:umkamu/utils/theme.dart';
+import 'package:umkamu/providers/franchise_provider.dart';
+import 'package:umkamu/models/franchise.dart';
 
 class UserForm extends StatefulWidget {
   static const String id = 'userform';
@@ -36,14 +40,20 @@ class _UserFormState extends State<UserForm> {
   var _tipeOptions = ['Konsumen', 'Produsen', 'Admin'];
   var _jenisKelaminOptions = ['Laki-Laki', 'Perempuan'];
   UserProvider _userProvider;
+  List<Franchise> _listFranchise;
+  FranchiseProvider _franchiseProvider;
   File _temp_file;
   final _picker = ImagePicker();
+  String _access, _id;
 
   @override
   void initState() {
     super.initState();
+    _getPreferences();
     Future.delayed(Duration.zero, () {
       _userProvider = Provider.of<UserProvider>(context, listen: false);
+      _franchiseProvider =
+          Provider.of<FranchiseProvider>(context, listen: false);
       if (widget.user != null) {
         _namaController.text = widget.user.nama;
         _emailController.text = widget.user.email;
@@ -87,6 +97,14 @@ class _UserFormState extends State<UserForm> {
     _royaltyController.dispose();
   }
 
+  _getPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _id = prefs.getString('id') ?? '';
+      _access = prefs.getString('access') ?? '';
+    });
+  }
+
   _getImageFile(ImageSource source) async {
     final pickedFile = await _picker.getImage(source: source, imageQuality: 50);
     File croppedFile = await ImageCropper.cropImage(
@@ -104,7 +122,9 @@ class _UserFormState extends State<UserForm> {
         iosUiSettings: IOSUiSettings(
           title: 'Edit Foto',
         ));
+
     setState(() {
+      imageCache.clear();
       _temp_file = croppedFile;
       _userProvider.temp_file = _temp_file.path;
     });
@@ -115,7 +135,8 @@ class _UserFormState extends State<UserForm> {
       context: context,
       builder: (_) => BasicDialogAlert(
         title: Text("Notifikasi"),
-        content: Text("Apakah anda yakin akan menghapus data ini?\nData yang dihapus tidak bisa dipulihkan."),
+        content: Text(
+            "Apakah anda yakin akan menghapus data ini?\nData yang dihapus tidak bisa dipulihkan."),
         actions: <Widget>[
           BasicDialogAction(
             title: Text("Batalkan"),
@@ -126,6 +147,9 @@ class _UserFormState extends State<UserForm> {
           BasicDialogAction(
             title: Text("Hapus"),
             onPressed: () {
+              if (_userProvider.tipe == 'Produsen') {
+                _franchiseProvider.remove(widget.user.id);
+              }
               _userProvider.remove(widget.user.id);
               Navigator.pop(context);
               Navigator.pop(context);
@@ -136,8 +160,36 @@ class _UserFormState extends State<UserForm> {
     );
   }
 
+  _onLoading() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return SpinKitDoubleBounce(
+          color: secondaryContentColor,
+          size: 50.0,
+        );
+      },
+    );
+    new Future.delayed(new Duration(seconds: 3), () {
+      Navigator.pop(context);
+      Navigator.pop(context); //pop dialog
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_access == 'Admin' && _userProvider.tipe == 'Produsen') {
+      _listFranchise = Provider.of<List<Franchise>>(context)
+          .where((franchise) => franchise.id == _userProvider.id)
+          .toList();
+      if (_listFranchise.length == 1) {
+        _franchiseProvider.foto1 = _listFranchise[0].foto1;
+        _franchiseProvider.foto2 = _listFranchise[0].foto2;
+        _franchiseProvider.foto3 = _listFranchise[0].foto3;
+      }
+    }
+
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -145,7 +197,7 @@ class _UserFormState extends State<UserForm> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          'User',
+          'Pengguna',
           style: TextStyle(
             color: primaryContentColor,
             fontSize: mediumSize,
@@ -154,9 +206,11 @@ class _UserFormState extends State<UserForm> {
           ),
         ),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: primaryContentColor),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
+            icon: Icon(Icons.arrow_back, color: primaryContentColor),
+            onPressed: () {
+              _userProvider.temp_file = null;
+              Navigator.of(context).pop();
+            }),
         bottom: PreferredSize(
           child: Container(
             color: shadow,
@@ -180,10 +234,12 @@ class _UserFormState extends State<UserForm> {
                   padding: const EdgeInsets.only(top: 16),
                   child: CircleAvatar(
                     backgroundImage: (widget.user != null && _temp_file == null)
-                        ? CachedNetworkImageProvider(widget.user.foto)
+                        ? (widget.user.foto == 'assets/images/akun.jpg')
+                            ? AssetImage(widget.user.foto)
+                            : CachedNetworkImageProvider(widget.user.foto)
                         : _temp_file != null
                             ? AssetImage(_temp_file.path)
-                            : AssetImage('assets/profile.jpg'),
+                            : AssetImage('assets/images/akun.jpg'),
                     radius: 75,
                   ),
                 ),
@@ -318,8 +374,7 @@ class _UserFormState extends State<UserForm> {
                     onChanged: (value) => _userProvider.rekening = value,
                     attribute: 'rekening',
                     maxLines: 1,
-                    maxLength: 15,
-                    keyboardType: TextInputType.number,
+                    maxLength: 50,
                     decoration: InputDecoration(
                       labelText: 'Rekening',
                       labelStyle: TextStyle(
@@ -330,114 +385,124 @@ class _UserFormState extends State<UserForm> {
                     ),
                     validators: [
                       FormBuilderValidators.required(),
-                      FormBuilderValidators.numeric(),
                     ],
                   ),
-                  FormBuilderTextField(
-                    controller: _poinController,
-                    onChanged: (value) => _userProvider.poin = int.parse(value),
-                    attribute: 'poin',
-                    maxLines: 1,
-                    maxLength: 15,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Poin',
-                      labelStyle: TextStyle(
-                        color: primaryContentColor,
-                        fontSize: smallSize,
-                        fontFamily: primaryFont,
-                      ),
-                    ),
-                    validators: [
-                      FormBuilderValidators.required(),
-                      FormBuilderValidators.max(20000),
-                      FormBuilderValidators.numeric(),
-                    ],
-                  ),
-                  FormBuilderTextField(
-                    controller: _komisiController,
-                    onChanged: (value) =>
-                        _userProvider.komisi = int.parse(value),
-                    attribute: 'komisi',
-                    maxLines: 1,
-                    maxLength: 15,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Komisi',
-                      labelStyle: TextStyle(
-                        color: primaryContentColor,
-                        fontSize: smallSize,
-                        fontFamily: primaryFont,
-                      ),
-                    ),
-                    validators: [
-                      FormBuilderValidators.required(),
-                      FormBuilderValidators.numeric(),
-                    ],
-                  ),
-                  FormBuilderTextField(
-                    controller: _royaltyController,
-                    onChanged: (value) =>
-                        _userProvider.royalty = int.parse(value),
-                    attribute: 'royalty',
-                    maxLines: 1,
-                    maxLength: 15,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Royalty',
-                      labelStyle: TextStyle(
-                        color: primaryContentColor,
-                        fontSize: smallSize,
-                        fontFamily: primaryFont,
-                      ),
-                    ),
-                    validators: [
-                      FormBuilderValidators.required(),
-                      FormBuilderValidators.numeric(),
-                    ],
-                  ),
-                  FormBuilderDropdown(
-                    attribute: 'tipe',
-                    onChanged: (value) => _userProvider.tipe = value.toString(),
-                    decoration: InputDecoration(
-                      labelText: 'Tipe',
-                      labelStyle: TextStyle(
-                        color: primaryContentColor,
-                        fontSize: smallSize,
-                        fontFamily: primaryFont,
-                      ),
-                    ),
-                    validators: [FormBuilderValidators.required()],
-                    items: _tipeOptions
-                        .map((tipe) =>
-                            DropdownMenuItem(value: tipe, child: Text('$tipe')))
-                        .toList(),
-                    initialValue:
-                        (widget.user != null) ? widget.user.tipe : 'Konsumen',
-                  ),
-                  FormBuilderRadioGroup(
-                    attribute: 'leader',
-                    decoration: InputDecoration(labelText: 'Leader'),
-                    onChanged: (value) =>
-                        _userProvider.leader = value.toString(),
-                    options: [
-                      FormBuilderFieldOption(
-                        value: 'Ya',
-                      ),
-                      FormBuilderFieldOption(
-                        value: 'Tidak',
-                      ),
-                    ],
-                    initialValue:
-                        (widget.user != null) ? widget.user.leader : 'Tidak',
-                    validators: [FormBuilderValidators.required()],
-                  ),
+                  (_access == 'Admin')
+                      ? FormBuilderTextField(
+                          controller: _poinController,
+                          onChanged: (value) =>
+                              _userProvider.poin = int.parse(value),
+                          attribute: 'poin',
+                          maxLines: 1,
+                          maxLength: 15,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Poin',
+                            labelStyle: TextStyle(
+                              color: primaryContentColor,
+                              fontSize: smallSize,
+                              fontFamily: primaryFont,
+                            ),
+                          ),
+                          validators: [
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.max(20000),
+                            FormBuilderValidators.numeric(),
+                          ],
+                        )
+                      : SizedBox(),
+                  (_access == 'Admin')
+                      ? FormBuilderTextField(
+                          controller: _komisiController,
+                          onChanged: (value) =>
+                              _userProvider.komisi = int.parse(value),
+                          attribute: 'komisi',
+                          maxLines: 1,
+                          maxLength: 15,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Komisi',
+                            labelStyle: TextStyle(
+                              color: primaryContentColor,
+                              fontSize: smallSize,
+                              fontFamily: primaryFont,
+                            ),
+                          ),
+                          validators: [
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.numeric(),
+                          ],
+                        )
+                      : SizedBox(),
+                  (_access == 'Admin')
+                      ? FormBuilderTextField(
+                          controller: _royaltyController,
+                          onChanged: (value) =>
+                              _userProvider.royalty = int.parse(value),
+                          attribute: 'royalty',
+                          maxLines: 1,
+                          maxLength: 15,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'Royalty',
+                            labelStyle: TextStyle(
+                              color: primaryContentColor,
+                              fontSize: smallSize,
+                              fontFamily: primaryFont,
+                            ),
+                          ),
+                          validators: [
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.numeric(),
+                          ],
+                        )
+                      : SizedBox(),
+                  (_access == 'Admin')
+                      ? FormBuilderDropdown(
+                          attribute: 'tipe',
+                          onChanged: (value) =>
+                              _userProvider.tipe = value.toString(),
+                          decoration: InputDecoration(
+                            labelText: 'Tipe',
+                            labelStyle: TextStyle(
+                              color: primaryContentColor,
+                              fontSize: smallSize,
+                              fontFamily: primaryFont,
+                            ),
+                          ),
+                          validators: [FormBuilderValidators.required()],
+                          items: _tipeOptions
+                              .map((tipe) => DropdownMenuItem(
+                                  value: tipe, child: Text('$tipe')))
+                              .toList(),
+                          initialValue: (widget.user != null)
+                              ? widget.user.tipe
+                              : 'Konsumen',
+                        )
+                      : SizedBox(),
+                  (_access == 'Admin')
+                      ? FormBuilderRadioGroup(
+                          attribute: 'leader',
+                          decoration: InputDecoration(labelText: 'Leader'),
+                          onChanged: (value) =>
+                              _userProvider.leader = value.toString(),
+                          options: [
+                            FormBuilderFieldOption(
+                              value: 'Ya',
+                            ),
+                            FormBuilderFieldOption(
+                              value: 'Tidak',
+                            ),
+                          ],
+                          initialValue: (widget.user != null)
+                              ? widget.user.leader
+                              : 'Tidak',
+                          validators: [FormBuilderValidators.required()],
+                        )
+                      : SizedBox(),
                 ],
               ),
             ),
-          ),
-          SizedBox(
-            height: 30,
           ),
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
@@ -455,7 +520,7 @@ class _UserFormState extends State<UserForm> {
                 if (_fbKey.currentState.saveAndValidate() &&
                     (_temp_file != null || widget.user != null)) {
                   _userProvider.save();
-                  Navigator.of(context).pop();
+                  _onLoading();
                 } else {
                   print(_fbKey.currentState.value);
                   Fluttertoast.showToast(
@@ -472,7 +537,7 @@ class _UserFormState extends State<UserForm> {
               minWidth: double.infinity,
             ),
           ),
-          (widget.user != null)
+          (widget.user != null && _access == 'Admin' && _userProvider.id != _id)
               ? Padding(
                   padding:
                       const EdgeInsets.only(left: 16, right: 16, bottom: 16),

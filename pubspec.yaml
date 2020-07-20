@@ -45,10 +45,18 @@ dependencies:
   carousel_pro: ^1.0.0
   path_provider: ^1.6.11
   http: ^0.12.1
+  shared_preferences: ^0.5.7+3
+  url_launcher: ^5.4.11
+  flutter_spinkit: ^4.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/images/logo.png"
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -81,5 +89,8 @@ flutter:
     - family: Roboto
       fonts:
         - asset: fonts/Roboto-Light.ttf
+    - family: Basketball
+      fonts:
+        - asset: fonts/Basketball.otf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages

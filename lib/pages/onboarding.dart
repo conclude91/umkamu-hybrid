@@ -18,13 +18,7 @@ class _OnBoardingState extends State<OnBoarding> {
   @override
   void initState() {
     super.initState();
-    Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      if (_currentPage < 2) {
-        _currentPage++;
-      } else {
-        _currentPage = 0;
-      }
-    });
+    _initPage();
   }
 
   @override
@@ -39,8 +33,20 @@ class _OnBoardingState extends State<OnBoarding> {
     });
   }
 
+  _initPage() {
+    Timer.periodic(Duration(seconds: 5), (Timer timer) {
+      if (_currentPage < 2) {
+        _currentPage++;
+      } else {
+        _currentPage = 0;
+      }
+    });
+  }
+
   @override
-  Widget build(BuildContext context) => sliderLayout();
+  Widget build(BuildContext context) {
+    return sliderLayout();
+  }
 
   Widget sliderLayout() => Scaffold(
         body: Container(
@@ -73,12 +79,14 @@ class _OnBoardingState extends State<OnBoarding> {
                                 .pushReplacementNamed(Login.id);
                           },
                           child: Padding(
-                            padding: EdgeInsets.only(right: 15.0, bottom: 15.0),
+                            padding: EdgeInsets.only(
+                                right: 15.0, bottom: 15.0, top: 15, left: 15),
                             child: Text(
-                              "Skip",
+                              "Lewati",
                               style: TextStyle(
                                 fontFamily: primaryFont,
                                 fontSize: tinySize,
+                                color: primaryContentColor,
                               ),
                             ),
                           ),
@@ -107,9 +115,9 @@ class _OnBoardingState extends State<OnBoarding> {
 }
 
 class SlideItem extends StatelessWidget {
-  final int index;
+  final int _index;
 
-  SlideItem(this.index);
+  SlideItem(this._index);
 
   @override
   Widget build(BuildContext context) {
@@ -121,18 +129,21 @@ class SlideItem extends StatelessWidget {
           height: MediaQuery.of(context).size.width * 0.6,
           width: MediaQuery.of(context).size.height * 0.4,
           decoration: BoxDecoration(
-              image: DecorationImage(
-                  image: AssetImage(sliderArrayList[index].imageUrl))),
+            image: DecorationImage(
+              image: AssetImage(sliderArrayList[_index].imageUrl),
+            ),
+          ),
         ),
         SizedBox(
           height: 60.0,
         ),
         Text(
-          sliderArrayList[index].heading,
+          sliderArrayList[_index].heading,
           style: TextStyle(
             fontFamily: primaryFont,
-            fontWeight: FontWeight.w700,
-            fontSize: 20.5,
+            fontWeight: fontBold,
+            fontSize: mediumSize,
+            color: primaryContentColor,
           ),
         ),
         SizedBox(
@@ -142,12 +153,13 @@ class SlideItem extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.symmetric(horizontal: 40.0),
             child: Text(
-              sliderArrayList[index].subHeading,
+              sliderArrayList[_index].subHeading,
               style: TextStyle(
                 fontFamily: primaryFont,
                 fontWeight: FontWeight.w500,
                 letterSpacing: 1.5,
-                fontSize: 12.5,
+                fontSize: microSize,
+                color: primaryContentColor,
               ),
               textAlign: TextAlign.center,
             ),
@@ -159,26 +171,26 @@ class SlideItem extends StatelessWidget {
 }
 
 class SlideDots extends StatelessWidget {
-  bool isActive;
+  bool _isActive;
 
-  SlideDots(this.isActive);
+  SlideDots(this._isActive);
 
   @override
   Widget build(BuildContext context) {
     return AnimatedContainer(
       duration: Duration(milliseconds: 150),
       margin: const EdgeInsets.symmetric(horizontal: 3.3),
-      height: isActive ? 10 : 6,
-      width: isActive ? 10 : 6,
+      height: _isActive ? 10 : 6,
+      width: _isActive ? 10 : 6,
       decoration: BoxDecoration(
-        color: isActive ? secondaryContentColor : Colors.grey,
-        border: isActive
+        color: _isActive ? primaryColor : primaryContentColor,
+        border: _isActive
             ? Border.all(
-                color: primaryColor,
-                width: 2.0,
+                color: secondaryContentColor,
+                width: 1.0,
               )
             : Border.all(
-                color: Colors.transparent,
+                color: secondaryContentColor,
                 width: 1,
               ),
         borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -201,17 +213,18 @@ class Slider {
 final sliderArrayList = [
   Slider(
       imageUrl: 'assets/images/slider_1.png',
-      heading: "Easy Exchange!",
-      subHeading:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ultricies, erat vitae porta consequat."),
+      heading: "Easy Exchange ! ",
+      subHeading: appName +
+          " memudahkan kamu untuk mendapatkan poin, komisi dan royalty dari konten yang kamu sebarkan."),
   Slider(
       imageUrl: 'assets/images/slider_2.png',
-      heading: "Easy to Use!",
-      subHeading:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ultricies, erat vitae porta consequat."),
+      heading: "Easy to Use !",
+      subHeading: appName +
+          " mudah digunakan lho !\nTampilannya mudah dimengerti dan pastinya bikin kamu nyaman menggunakannya"),
   Slider(
       imageUrl: 'assets/images/slider_3.png',
-      heading: "Connect with Others",
-      subHeading:
-          "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla ultricies, erat vitae porta consequat."),
+      heading: "Connect With Others !",
+      subHeading: "Tunggu apa lagi ?\nAyo bergabung dengan " +
+          appName +
+          " untuk perluas jaringanmu dan dapatkan keuntunganmu sendiri."),
 ];
