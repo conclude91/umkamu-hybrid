@@ -16,6 +16,7 @@ class FranchiseProvider with ChangeNotifier {
   String _deskripsi;
   String _whatsapp;
   String _kategori;
+  String _promo;
   String _temp_file1;
   String _temp_file2;
   String _temp_file3;
@@ -38,6 +39,8 @@ class FranchiseProvider with ChangeNotifier {
   String get whatsapp => _whatsapp;
 
   String get kategori => _kategori;
+
+  String get promo => _promo;
 
   String get temp_file1 => _temp_file1;
 
@@ -82,6 +85,10 @@ class FranchiseProvider with ChangeNotifier {
     _kategori = value;
   }
 
+  set promo(String value) {
+    _promo = value;
+  }
+
   set temp_file1(String value) {
     _temp_file1 = value;
   }
@@ -104,6 +111,7 @@ class FranchiseProvider with ChangeNotifier {
     deskripsi = franchise.deskripsi;
     whatsapp = franchise.whatsapp;
     kategori = franchise.kategori;
+    promo = franchise.promo;
   }
 
   save() async {
@@ -126,7 +134,8 @@ class FranchiseProvider with ChangeNotifier {
         kota: kota,
         whatsapp: whatsapp,
         deskripsi: deskripsi,
-        kategori: kategori);
+        kategori: kategori,
+        promo: promo);
 
     firestoreService.saveFranchise(franchise);
   }

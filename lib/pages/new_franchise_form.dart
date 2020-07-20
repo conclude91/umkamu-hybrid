@@ -15,17 +15,17 @@ import 'package:umkamu/models/franchise.dart';
 import 'package:umkamu/providers/franchise_provider.dart';
 import 'package:umkamu/utils/theme.dart';
 
-class FranchiseForm extends StatefulWidget {
+class NewFranchiseForm extends StatefulWidget {
   static const String id = 'franchiseform';
   final Franchise franchise;
 
-  FranchiseForm(this.franchise);
+  NewFranchiseForm(this.franchise);
 
   @override
-  _FranchiseFormState createState() => _FranchiseFormState();
+  _NewFranchiseFormState createState() => _NewFranchiseFormState();
 }
 
-class _FranchiseFormState extends State<FranchiseForm> {
+class _NewFranchiseFormState extends State<NewFranchiseForm> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   final _namaController = TextEditingController();
   final _kotaController = TextEditingController();
@@ -61,7 +61,7 @@ class _FranchiseFormState extends State<FranchiseForm> {
         _whatsappController.text = '';
         _franchiseProvider.franchise = Franchise();
         _franchiseProvider.kategori = 'Jajanan';
-        _franchiseProvider.id = _idUser ?? '0';
+        _franchiseProvider.id = DateTime.now().millisecondsSinceEpoch.toString();
         _franchiseProvider.promo = 'Tidak';
       }
     });
@@ -191,6 +191,9 @@ class _FranchiseFormState extends State<FranchiseForm> {
       },
     );
     new Future.delayed(new Duration(seconds: 3), () {
+      _franchiseProvider.temp_file1 = null;
+      _franchiseProvider.temp_file2 = null;
+      _franchiseProvider.temp_file3 = null;
       Navigator.pop(context);
       Navigator.pop(context); //pop dialog
     });

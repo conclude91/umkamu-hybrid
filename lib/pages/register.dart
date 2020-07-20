@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter_dialogs/flutter_dialogs.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
+import 'package:umkamu/models/user.dart';
 import 'package:umkamu/providers/user_provider.dart';
+import 'package:umkamu/utils/function.dart';
 import 'package:umkamu/utils/theme.dart';
 
 import 'login.dart';
@@ -14,9 +18,94 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  UserProvider _userProvider;
+  List<User> _listUser;
+  final _namaController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _whatsappController = TextEditingController();
+  bool _namaError = false;
+  bool _emailError = false;
+  bool _passwordError = false;
+  bool _whatsappError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _namaController.text = '';
+    _emailController.text = '';
+    _passwordController.text = '';
+    _whatsappController.text = '';
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _namaController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _whatsappController.dispose();
+  }
+
+  _showConfirmationAlert(BuildContext context) {
+    showPlatformDialog(
+      context: context,
+      builder: (_) => BasicDialogAlert(
+        title: Text(
+          "Konfirmasi",
+          style: TextStyle(
+              fontFamily: primaryFont,
+              fontSize: mediumSize,
+              color: primaryContentColor),
+        ),
+        content: Text(
+          "Pastikan kamu sudah mengisi data dengan benar.\n"
+                  "Dengan menekan tombol ini kamu telah menyetujui syarat dan ketentuan yang berlaku di " +
+              appName +
+              ".",
+          style: TextStyle(
+              fontFamily: primaryFont,
+              fontSize: tinySize,
+              color: primaryContentColor),
+        ),
+        actions: <Widget>[
+          BasicDialogAction(
+            title: Text("Batalkan"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          BasicDialogAction(
+            title: Text("Setuju"),
+            onPressed: () {
+              _userProvider.save();
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
+    if (Provider.of<List<User>>(context) != null) {
+      _listUser = Provider.of<List<User>>(context)
+          .where((user) => user.email == _emailController.text)
+          .toList();
+    }
+
+    _userProvider = Provider.of<UserProvider>(context);
+    _userProvider.id = DateTime.now().millisecondsSinceEpoch.toString();
+    _userProvider.foto = 'assets/images/akun.jpg';
+    _userProvider.jenis_kelamin = 'Laki-Laki';
+    _userProvider.rekening = '0';
+    _userProvider.poin = 0;
+    _userProvider.komisi = 0;
+    _userProvider.royalty = 0;
+    _userProvider.tipe = 'Konsumen';
+    _userProvider.leader = 'Tidak';
 
     return Scaffold(
       body: Container(
@@ -27,7 +116,8 @@ class _RegisterState extends State<Register> {
           ),
         ),
         height: MediaQuery.of(context).size.height,
-        child: Column(
+        child: ListView(
+          shrinkWrap: true,
           children: <Widget>[
             Container(
               padding: const EdgeInsets.only(top: 150.0, bottom: 50.0),
@@ -73,13 +163,22 @@ class _RegisterState extends State<Register> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: _namaController,
                       textAlign: TextAlign.center,
+                      maxLength: 50,
                       decoration: InputDecoration(
+                        counterText: '',
                         border: InputBorder.none,
-                        hintText: 'Nama',
-                        hintStyle: TextStyle(color: primaryContentColor),
+                        hintText: 'Nama Lengkap',
+                        hintStyle: TextStyle(
+                          color: primaryContentColor,
+                          fontFamily: primaryFont,
+                          fontSize: tinySize,
+                        ),
+                        errorText:
+                            _namaError ? 'This value can\'t be empty' : null,
                       ),
-                      onChanged: (value) => userProvider.nama = value,
+                      onChanged: (value) => _userProvider.nama = value,
                     ),
                   ),
                 ],
@@ -112,13 +211,22 @@ class _RegisterState extends State<Register> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: _emailController,
+                      maxLength: 50,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
+                        counterText: '',
                         border: InputBorder.none,
-                        hintText: 'example@abc.com',
-                        hintStyle: TextStyle(color: primaryContentColor),
+                        hintText: 'email@mu.com',
+                        hintStyle: TextStyle(
+                          color: primaryContentColor,
+                          fontFamily: primaryFont,
+                          fontSize: tinySize,
+                        ),
+                        errorText:
+                            _emailError ? 'This value can\'t be empty' : null,
                       ),
-                      onChanged: (value) => userProvider.email = value,
+                      onChanged: (value) => _userProvider.email = value,
                     ),
                   ),
                 ],
@@ -151,14 +259,24 @@ class _RegisterState extends State<Register> {
                   ),
                   Expanded(
                     child: TextField(
-                      obscureText: true,
+                      controller: _passwordController,
+                      maxLength: 50,
+//                      obscureText: true,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
+                        counterText: '',
                         border: InputBorder.none,
-                        hintText: '*********',
-                        hintStyle: TextStyle(color: primaryContentColor),
+                        hintText: 'Password',
+                        hintStyle: TextStyle(
+                          color: primaryContentColor,
+                          fontFamily: primaryFont,
+                          fontSize: tinySize,
+                        ),
+                        errorText: _passwordError
+                            ? 'This value can\'t be empty'
+                            : null,
                       ),
-                      onChanged: (value) => userProvider.password = value,
+                      onChanged: (value) => _userProvider.password = value,
                     ),
                   ),
                 ],
@@ -191,13 +309,24 @@ class _RegisterState extends State<Register> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: _whatsappController,
                       textAlign: TextAlign.center,
+                      keyboardType: TextInputType.number,
+                      maxLength: 15,
                       decoration: InputDecoration(
+                        counterText: '',
                         border: InputBorder.none,
-                        hintText: 'WhatsApp',
-                        hintStyle: TextStyle(color: primaryContentColor),
+                        hintText: 'No WhatsApp',
+                        hintStyle: TextStyle(
+                          color: primaryContentColor,
+                          fontFamily: primaryFont,
+                          fontSize: tinySize,
+                        ),
+                        errorText: _whatsappError
+                            ? 'This value can\'t be empty'
+                            : null,
                       ),
-                      onChanged: (value) => userProvider.whatsapp = value,
+                      onChanged: (value) => _userProvider.whatsapp = value,
                     ),
                   ),
                 ],
@@ -214,12 +343,64 @@ class _RegisterState extends State<Register> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
                       color: primaryColor,
-                      onPressed: () => {
-                        userProvider.save(),
+                      onPressed: () {
+                        setState(() {
+                          _namaController.text.isEmpty
+                              ? _namaError = true
+                              : _namaError = false;
+                          _emailController.text.isEmpty
+                              ? _emailError = true
+                              : _emailError = false;
+                          _passwordController.text.isEmpty
+                              ? _passwordError = true
+                              : _passwordError = false;
+                          _whatsappController.text.isEmpty
+                              ? _whatsappError = true
+                              : _whatsappError = false;
+                        });
+
+                        if (checkEmailFormat(_emailController.text) == false) {
+                          Fluttertoast.showToast(
+                              msg: 'Inputan email tidak valid',
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor:
+                                  primaryContentColor.withOpacity(0.5),
+                              textColor: secondaryContentColor,
+                              fontSize: microSize);
+                        }
+
+                        if (_namaError == false &&
+                            _emailError == false &&
+                            checkEmailFormat(_emailController.text) &&
+                            _passwordError == false &&
+                            _whatsappError == false) {
+                          if (_listUser.length > 0) {
+                            Fluttertoast.showToast(
+                                msg: 'Pendaftaran gagal.\nEmail : ' +
+                                    _listUser[0].email +
+                                    ' telah terdaftar sebelumya.',
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor:
+                                    primaryContentColor.withOpacity(0.5),
+                                textColor: secondaryContentColor,
+                                fontSize: microSize);
+                          } else {
+                            _showConfirmationAlert(context);
+                          }
+                        }
                       },
                       child: Text(
                         "Daftar",
-                        style: TextStyle(color: secondaryContentColor),
+                        style: TextStyle(
+                          color: secondaryContentColor,
+                          fontFamily: primaryFont,
+                          fontSize: tinySize,
+                          fontWeight: fontBold,
+                        ),
                       ),
                     ),
                   ),
@@ -242,11 +423,14 @@ class _RegisterState extends State<Register> {
                           vertical: 20.0, horizontal: 20.0),
                       color: Colors.transparent,
                       onPressed: () => {
-                        Navigator.of(context).pushReplacementNamed(Login.id),
+                        Navigator.pop(context),
                       },
                       child: Text(
                         "Sudah punya akun? Silahkan masuk disini.",
-                        style: TextStyle(color: primaryContentColor),
+                        style: TextStyle(
+                            color: primaryContentColor,
+                            fontFamily: primaryFont,
+                            fontSize: microSize),
                       ),
                     ),
                   ),

@@ -139,29 +139,13 @@ class UserProvider with ChangeNotifier {
 
   save() async {
     User user;
-    if (id == null) {
+    /*if (id == null) {
       String millis = DateTime.now().millisecondsSinceEpoch.toString();
       user = User(
           id: millis,
-          foto: await firestoreService.uploadFile(
-              'users/foto/' + millis, File(_temp_file)),
-          nama: nama,
-          jenis_kelamin: jenis_kelamin,
-          email: email,
-          password: password,
-          whatsapp: whatsapp,
-          rekening: rekening,
-          poin: poin,
-          komisi: komisi,
-          royalty: royalty,
-          tipe: tipe,
-          leader: leader);
-    } else {
-      user = User(
-          id: id,
           foto: temp_file != null
               ? await firestoreService.uploadFile(
-                  'users/foto/' + id, File(temp_file))
+                  'users/foto/' + millis, File(_temp_file))
               : foto,
           nama: nama,
           jenis_kelamin: jenis_kelamin,
@@ -174,7 +158,25 @@ class UserProvider with ChangeNotifier {
           royalty: royalty,
           tipe: tipe,
           leader: leader);
-    }
+    } else {*/
+    user = User(
+        id: id,
+        foto: temp_file != null
+            ? await firestoreService.uploadFile(
+                'users/foto/' + id, File(temp_file))
+            : foto,
+        nama: nama,
+        jenis_kelamin: jenis_kelamin,
+        email: email.toLowerCase(),
+        password: password,
+        whatsapp: whatsapp,
+        rekening: rekening,
+        poin: poin,
+        komisi: komisi,
+        royalty: royalty,
+        tipe: tipe,
+        leader: leader);
+//    }
     firestoreService.saveUser(user);
   }
 

@@ -1,7 +1,13 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:umkamu/models/user.dart';
 import 'package:umkamu/pages/dashboard.dart';
 import 'package:umkamu/pages/register.dart';
+import 'package:umkamu/providers/user_provider.dart';
+import 'package:umkamu/utils/function.dart';
 import 'package:umkamu/utils/theme.dart';
 
 class Login extends StatefulWidget {
@@ -12,8 +18,43 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  UserProvider _userProvider;
+  List<User> _listUser;
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _emailError = false;
+  bool _passwordError = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _emailController.text = '';
+    _passwordController.text = '';
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+  }
+
+  _setPreferences(User user) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString('id', user.id);
+    sharedPreferences.setString('access', user.tipe);
+    sharedPreferences.setBool('isLogin', true);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (Provider.of<List<User>>(context) != null) {
+      _listUser = Provider.of<List<User>>(context)
+          .where((user) => user.email == _emailController.text)
+          .where((user) => user.password == _passwordController.text)
+          .toList();
+    }
+
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -23,7 +64,8 @@ class _LoginState extends State<Login> {
           ),
         ),
         height: MediaQuery.of(context).size.height,
-        child: Column(
+        child: ListView(
+          shrinkWrap: true,
           children: <Widget>[
             Container(
               padding: const EdgeInsets.only(top: 150.0, bottom: 50.0),
@@ -69,11 +111,21 @@ class _LoginState extends State<Login> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: _emailController,
+                      onChanged: (value) => _userProvider.email = value,
+                      maxLength: 50,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
+                        counterText: '',
                         border: InputBorder.none,
-                        hintText: 'example@abc.com',
-                        hintStyle: TextStyle(color: primaryContentColor),
+                        hintText: 'email@mu.com',
+                        hintStyle: TextStyle(
+                          color: primaryContentColor,
+                          fontFamily: primaryFont,
+                          fontSize: tinySize,
+                        ),
+                        errorText:
+                            _emailError ? 'This value can\'t be empty' : null,
                       ),
                     ),
                   ),
@@ -107,12 +159,23 @@ class _LoginState extends State<Login> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: _passwordController,
+                      onChanged: (value) => _userProvider.password = value,
+                      maxLength: 50,
                       obscureText: true,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
+                        counterText: '',
                         border: InputBorder.none,
                         hintText: '*********',
-                        hintStyle: TextStyle(color: primaryContentColor),
+                        hintStyle: TextStyle(
+                          color: primaryContentColor,
+                          fontFamily: primaryFont,
+                          fontSize: tinySize,
+                        ),
+                        errorText: _passwordError
+                            ? 'This value can\'t be empty'
+                            : null,
                       ),
                     ),
                   ),
@@ -130,13 +193,57 @@ class _LoginState extends State<Login> {
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
                       color: primaryColor,
-                      onPressed: () => {
-                        Navigator.of(context)
-                            .pushReplacementNamed(Dashboard.id),
+                      onPressed: () {
+                        setState(() {
+                          _emailController.text.isEmpty
+                              ? _emailError = true
+                              : _emailError = false;
+                          _passwordController.text.isEmpty
+                              ? _passwordError = true
+                              : _passwordError = false;
+                        });
+
+                        if (checkEmailFormat(_emailController.text) == false) {
+                          Fluttertoast.showToast(
+                              msg: 'Inputan email tidak valid',
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor:
+                                  primaryContentColor.withOpacity(0.5),
+                              textColor: secondaryContentColor,
+                              fontSize: microSize);
+                        }
+
+                        if (_emailError == false &&
+                            checkEmailFormat(_emailController.text) &&
+                            _passwordError == false) {
+                          if (_listUser.length > 0) {
+                            _setPreferences(_listUser[0]);
+                            Navigator.of(context)
+                                .pushReplacementNamed(Dashboard.id);
+                          } else {
+                            Fluttertoast.showToast(
+                                msg:
+                                    'Login gagal.\nCek kembali inputan email dan password.',
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor:
+                                    primaryContentColor.withOpacity(0.5),
+                                textColor: secondaryContentColor,
+                                fontSize: microSize);
+                          }
+                        }
                       },
                       child: Text(
                         "Masuk",
-                        style: TextStyle(color: secondaryContentColor),
+                        style: TextStyle(
+                          color: secondaryContentColor,
+                          fontSize: tinySize,
+                          fontFamily: primaryFont,
+                          fontWeight: fontBold,
+                        ),
                       ),
                     ),
                   ),
@@ -157,7 +264,11 @@ class _LoginState extends State<Login> {
                       onPressed: () => {},
                       child: Text(
                         "Lupa Password?",
-                        style: TextStyle(color: primaryContentColor),
+                        style: TextStyle(
+                          color: primaryContentColor,
+                          fontFamily: primaryFont,
+                          fontSize: microSize,
+                        ),
                       ),
                     ),
                   ),
@@ -180,11 +291,15 @@ class _LoginState extends State<Login> {
                           vertical: 20.0, horizontal: 20.0),
                       color: Colors.transparent,
                       onPressed: () => {
-                        Navigator.of(context).pushReplacementNamed(Register.id),
+                        Navigator.of(context).pushNamed(Register.id),
                       },
                       child: Text(
                         "Belum punya akun? Daftar dulu disini.",
-                        style: TextStyle(color: primaryContentColor),
+                        style: TextStyle(
+                          color: primaryContentColor,
+                          fontFamily: primaryFont,
+                          fontSize: microSize,
+                        ),
                       ),
                     ),
                   ),

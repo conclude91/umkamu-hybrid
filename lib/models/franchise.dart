@@ -10,6 +10,7 @@ class Franchise {
   final String deskripsi;
   final String whatsapp;
   final String kategori;
+  final String promo;
 
   Franchise({
     @required this.id,
@@ -21,6 +22,7 @@ class Franchise {
     @required this.deskripsi,
     @required this.whatsapp,
     @required this.kategori,
+    @required this.promo,
   });
 
   Map<String, dynamic> toMap() {
@@ -34,6 +36,7 @@ class Franchise {
       'deskripsi': deskripsi,
       'whatsapp': whatsapp,
       'kategori': kategori,
+      'promo': promo,
     };
   }
 
@@ -46,5 +49,6 @@ class Franchise {
         kota = firestore['kota'],
         deskripsi = firestore['deskripsi'],
         whatsapp = firestore['whatsapp'],
-        kategori = firestore['kategori'];
+        kategori = firestore['kategori'],
+        promo = firestore['promo'];
 }
