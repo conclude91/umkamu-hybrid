@@ -11,6 +11,8 @@ class Franchise {
   final String whatsapp;
   final String kategori;
   final String promo;
+  final String disetujui;
+  final String pengusul;
 
   Franchise({
     @required this.id,
@@ -23,6 +25,8 @@ class Franchise {
     @required this.whatsapp,
     @required this.kategori,
     @required this.promo,
+    @required this.disetujui,
+    @required this.pengusul,
   });
 
   Map<String, dynamic> toMap() {
@@ -37,6 +41,8 @@ class Franchise {
       'whatsapp': whatsapp,
       'kategori': kategori,
       'promo': promo,
+      'disetujui' : disetujui,
+      'pengusul' : pengusul,
     };
   }
 
@@ -50,5 +56,7 @@ class Franchise {
         deskripsi = firestore['deskripsi'],
         whatsapp = firestore['whatsapp'],
         kategori = firestore['kategori'],
-        promo = firestore['promo'];
+        promo = firestore['promo'],
+        disetujui = firestore['disetujui'],
+        pengusul = firestore['pengusul'];
 }

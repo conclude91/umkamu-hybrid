@@ -45,15 +45,15 @@ class _FranchiseFormState extends State<FranchiseForm> {
     Future.delayed(Duration.zero, () {
       _franchiseProvider =
           Provider.of<FranchiseProvider>(context, listen: false);
-      _franchiseProvider.temp_file1 = null;
-      _franchiseProvider.temp_file2 = null;
-      _franchiseProvider.temp_file3 = null;
       if (widget.franchise != null) {
         _namaController.text = widget.franchise.nama;
         _kotaController.text = widget.franchise.kota;
         _deskripsiController.text = widget.franchise.deskripsi;
         _whatsappController.text = widget.franchise.whatsapp;
         _franchiseProvider.franchise = widget.franchise;
+        _franchiseProvider.temp_file1 = null;
+        _franchiseProvider.temp_file2 = null;
+        _franchiseProvider.temp_file3 = null;
       } else {
         _namaController.text = '';
         _kotaController.text = '';
@@ -61,8 +61,13 @@ class _FranchiseFormState extends State<FranchiseForm> {
         _whatsappController.text = '';
         _franchiseProvider.franchise = Franchise();
         _franchiseProvider.kategori = 'Jajanan';
-        _franchiseProvider.id = _idUser ?? '0';
+        _franchiseProvider.id = DateTime.now().millisecondsSinceEpoch.toString();
         _franchiseProvider.promo = 'Tidak';
+        _franchiseProvider.disetujui = 'Tidak';
+        _franchiseProvider.pengusul = _idUser ?? '0';
+        _franchiseProvider.temp_file1 = null;
+        _franchiseProvider.temp_file2 = null;
+        _franchiseProvider.temp_file3 = null;
       }
     });
   }
@@ -205,7 +210,7 @@ class _FranchiseFormState extends State<FranchiseForm> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          (_access == 'Admin') ? 'Franchise' : 'Franchise-Ku',
+          'Franchise',
           style: TextStyle(
             color: primaryContentColor,
             fontSize: mediumSize,
@@ -216,9 +221,6 @@ class _FranchiseFormState extends State<FranchiseForm> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: primaryContentColor),
           onPressed: () {
-            _franchiseProvider.temp_file1 = null;
-            _franchiseProvider.temp_file2 = null;
-            _franchiseProvider.temp_file3 = null;
             Navigator.of(context).pop();
           },
         ),
@@ -448,7 +450,7 @@ class _FranchiseFormState extends State<FranchiseForm> {
                         ? widget.franchise.kategori
                         : 'Jajanan',
                   ),
-                  _access == 'Admin'
+                  (_access == 'Admin')
                       ? FormBuilderRadioGroup(
                           attribute: 'promo',
                           decoration: InputDecoration(labelText: 'Promo'),
@@ -467,6 +469,26 @@ class _FranchiseFormState extends State<FranchiseForm> {
                               : 'Tidak',
                           validators: [FormBuilderValidators.required()],
                         )
+                      : SizedBox(),
+                  (_access == 'Admin')
+                      ? FormBuilderRadioGroup(
+                    attribute: 'disetujui',
+                    decoration: InputDecoration(labelText: 'Disetujui'),
+                    onChanged: (value) =>
+                    _franchiseProvider.disetujui = value.toString(),
+                    options: [
+                      FormBuilderFieldOption(
+                        value: 'Ya',
+                      ),
+                      FormBuilderFieldOption(
+                        value: 'Tidak',
+                      ),
+                    ],
+                    initialValue: (widget.franchise != null)
+                        ? widget.franchise.disetujui
+                        : 'Tidak',
+                    validators: [FormBuilderValidators.required()],
+                  )
                       : SizedBox(),
                 ],
               ),

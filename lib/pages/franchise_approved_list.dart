@@ -2,28 +2,24 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:umkamu/models/franchise.dart';
 import 'package:umkamu/pages/franchise_form.dart';
 import 'package:umkamu/utils/theme.dart';
 
-import 'franchise_detail.dart';
-
-class FranchiseList extends StatefulWidget {
-  static const String id = "franchiselist";
-
-  final String category;
-
-  FranchiseList(this.category);
+class FranchiseApprovedList extends StatefulWidget {
+  static const String id = "franchiseapprovedlist";
 
   @override
-  _FranchiseListState createState() => _FranchiseListState();
+  _FranchiseApprovedListState createState() => _FranchiseApprovedListState();
 }
 
-class _FranchiseListState extends State<FranchiseList> {
+class _FranchiseApprovedListState extends State<FranchiseApprovedList> {
   TextEditingController _filterController = new TextEditingController();
   String _access;
+  String _id;
   List<Franchise> _listFranchise = [];
   List<Franchise> _filterListFranchise = [];
 
@@ -61,6 +57,7 @@ class _FranchiseListState extends State<FranchiseList> {
   _getPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
+      _id = prefs.getString('id') ?? '';
       _access = prefs.getString('access') ?? '';
     });
   }
@@ -68,14 +65,13 @@ class _FranchiseListState extends State<FranchiseList> {
   @override
   Widget build(BuildContext context) {
     if (Provider.of<List<Franchise>>(context) != null) {
-      if (widget.category != null) {
+      if (_access == 'Admin') {
         _listFranchise = Provider.of<List<Franchise>>(context)
-            .where((franchise) => franchise.kategori == widget.category)
-            .where((franchise) => franchise.disetujui == 'Ya')
+            .where((franchise) => franchise.disetujui == 'Tidak')
             .toList();
-      } else {
+      } else if (_access == 'Produsen') {
         _listFranchise = Provider.of<List<Franchise>>(context)
-            .where((franchise) => franchise.disetujui == 'Ya')
+            .where((franchise) => franchise.pengusul == _id)
             .toList();
       }
     }
@@ -87,7 +83,7 @@ class _FranchiseListState extends State<FranchiseList> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          widget.category ?? 'List Franchise',
+          'List Pengajuan Franchise',
           style: TextStyle(
             color: primaryContentColor,
             fontSize: mediumSize,
@@ -99,15 +95,15 @@ class _FranchiseListState extends State<FranchiseList> {
           icon: Icon(Icons.arrow_back, color: primaryContentColor),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        /*actions: <Widget>[
-          (_access == 'Admin')
+        actions: <Widget>[
+          (_access == 'Admin' || _access == 'Produsen')
               ? IconButton(
                   icon: Icon(Icons.add, color: primaryContentColor),
                   onPressed: () =>
                       Navigator.of(context).pushNamed(FranchiseForm.id),
                 )
               : SizedBox(),
-        ],*/
+        ],
         bottom: PreferredSize(
           child: Container(
             color: shadow,
@@ -157,15 +153,10 @@ class _FranchiseListState extends State<FranchiseList> {
                               margin: new EdgeInsets.symmetric(
                                   horizontal: 10.0, vertical: 6.0),
                               child: InkWell(
-                                onTap: () => Navigator.of(context).pushNamed(
-                                    FranchiseDetail.id,
-                                    arguments: _filterListFranchise[index]),
-                                onLongPress: () {
-                                  if (_access == 'Admin') {
-                                    Navigator.of(context).pushNamed(
-                                        FranchiseForm.id,
-                                        arguments: _filterListFranchise[index]);
-                                  }
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                      FranchiseForm.id,
+                                      arguments: _filterListFranchise[index]);
                                 },
                                 child: Container(
                                     decoration: BoxDecoration(
@@ -311,6 +302,26 @@ class _FranchiseListState extends State<FranchiseList> {
                                                       ],
                                                     ),
                                                   ),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.topRight,
+                                                    child: (_filterListFranchise[
+                                                                    index]
+                                                                .disetujui ==
+                                                            'Ya')
+                                                        ? Icon(
+                                                            MdiIcons
+                                                                .checkDecagram,
+                                                            color: accentColor,
+                                                            size: tinySize,
+                                                          )
+                                                        : Icon(
+                                                            MdiIcons
+                                                                .alertCircleOutline,
+                                                            color: gold,
+                                                            size: tinySize,
+                                                          ),
+                                                  ),
                                                 ],
                                               ),
                                             ),
@@ -336,15 +347,10 @@ class _FranchiseListState extends State<FranchiseList> {
                               margin: new EdgeInsets.symmetric(
                                   horizontal: 10.0, vertical: 6.0),
                               child: InkWell(
-                                onTap: () => Navigator.of(context).pushNamed(
-                                    FranchiseDetail.id,
-                                    arguments: _listFranchise[index]),
-                                onLongPress: () {
-                                  if (_access == 'Admin') {
-                                    Navigator.of(context).pushNamed(
-                                        FranchiseForm.id,
-                                        arguments: _listFranchise[index]);
-                                  }
+                                onTap: () {
+                                  Navigator.of(context).pushNamed(
+                                      FranchiseForm.id,
+                                      arguments: _listFranchise[index]);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -469,6 +475,23 @@ class _FranchiseListState extends State<FranchiseList> {
                                                     ),
                                                   ],
                                                 ),
+                                              ),
+                                              Align(
+                                                alignment: Alignment.topRight,
+                                                child: (_listFranchise[index]
+                                                            .disetujui ==
+                                                        'Ya')
+                                                    ? Icon(
+                                                        MdiIcons.checkDecagram,
+                                                        color: accentColor,
+                                                        size: tinySize,
+                                                      )
+                                                    : Icon(
+                                                        MdiIcons
+                                                            .alertCircleOutline,
+                                                        color: gold,
+                                                        size: tinySize,
+                                                      ),
                                               ),
                                             ],
                                           ),

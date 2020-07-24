@@ -3,6 +3,8 @@ import 'package:umkamu/utils/theme.dart';
 final String adminContact = '+628122153935';
 final String copyright = appName + ' \u00a9 2020';
 final String fbId = '292360518665049';
+final String adminEmail = 'andri.nugraha.r@gmail.com';
+final String adminPassEmail = 'fewpmuasvygidtjp';
 
 final String contentOffice =
     'Tidak banyak pengusaha besar di Indonesia yang mau berbagi ilmu dan membongkar strategi bisnisnya ke tengah publik. Diantara mereka yang tidak mau mungkin karena pertimbangan bahwa rahasia perusahaan tidak boleh diumbar-umbar. Apabila nanti bocor dan terdengar sampai ke sang rival, perusahaan mereka bisa ambruk dan hancur lebur. Mungkin ada juga yang beralasan karena tidak tahu bagaimana cara menyampaikannya dengan baik, karena memiliki kekurangan dalam komunikasi. Apapun alasannya, saya kira mereka perlu melihat bagaimana Bhakti Desta Alamsyah pemilik Best Brands Group Inc mampu melakukannya, tanpa rasa takut sedikitpun usahanya dicontek oleh orang lain. Bahkan ia punya prinsip bahagia ketika melihat orang lain membuka usaha.\n\n'

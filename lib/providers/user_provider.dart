@@ -161,14 +161,14 @@ class UserProvider with ChangeNotifier {
     } else {*/
     user = User(
         id: id,
-        foto: temp_file != null
+        foto: (temp_file != null && temp_file != '')
             ? await firestoreService.uploadFile(
                 'users/foto/' + id, File(temp_file))
             : foto,
         nama: nama,
         jenis_kelamin: jenis_kelamin,
-        email: email.toLowerCase(),
-        password: password,
+        email: email.toLowerCase().trim(),
+        password: password.trim(),
         whatsapp: whatsapp,
         rekening: rekening,
         poin: poin,

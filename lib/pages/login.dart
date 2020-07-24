@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:umkamu/models/user.dart';
 import 'package:umkamu/pages/dashboard.dart';
+import 'package:umkamu/pages/forgot_password.dart';
 import 'package:umkamu/pages/register.dart';
 import 'package:umkamu/providers/user_provider.dart';
 import 'package:umkamu/utils/function.dart';
@@ -19,7 +20,7 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   UserProvider _userProvider;
-  List<User> _listUser;
+  List<User> _listUser = [];
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _emailError = false;
@@ -110,6 +111,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   Expanded(
+                    flex: 10,
                     child: TextField(
                       controller: _emailController,
                       onChanged: (value) => _userProvider.email = value,
@@ -158,6 +160,7 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                   Expanded(
+                    flex: 10,
                     child: TextField(
                       controller: _passwordController,
                       onChanged: (value) => _userProvider.password = value,
@@ -183,12 +186,12 @@ class _LoginState extends State<Login> {
               ),
             ),
             Container(
-              width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 30.0),
               alignment: Alignment.center,
               child: Row(
                 children: <Widget>[
                   Expanded(
+                    flex: 10,
                     child: FlatButton(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
@@ -255,37 +258,39 @@ class _LoginState extends State<Login> {
               margin: const EdgeInsets.only(left: 40.0, right: 40.0, top: 10.0),
               alignment: Alignment.center,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Expanded(
-                    child: FlatButton(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 20.0, horizontal: 20.0),
-                      color: Colors.transparent,
-                      onPressed: () => {},
-                      child: Text(
-                        "Lupa Password?",
-                        style: TextStyle(
-                          color: primaryContentColor,
-                          fontFamily: primaryFont,
-                          fontSize: microSize,
-                        ),
+                  FlatButton(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 20.0, horizontal: 20.0),
+                    color: Colors.transparent,
+                    onPressed: () {
+                      Navigator.of(context)
+                          .pushNamed(ForgotPassword.id);
+                    },
+                    child: Text(
+                      "Lupa Password?",
+                      style: TextStyle(
+                        color: primaryContentColor,
+                        fontFamily: primaryFont,
+                        fontSize: microSize,
                       ),
                     ),
                   ),
                 ],
               ),
             ),
-            Expanded(
-              child: Divider(),
-            ),
+            Divider(),
             Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(
                   left: 40.0, right: 40.0, top: 10.0, bottom: 20.0),
               alignment: Alignment.center,
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Expanded(
+                    flex: 10,
                     child: FlatButton(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
