@@ -48,6 +48,9 @@ dependencies:
   shared_preferences: ^0.5.7+3
   url_launcher: ^5.4.11
   flutter_spinkit: ^4.1.2
+  ntp: ^1.0.7
+  intl: ^0.16.1
+  mailer2: ^1.2.5
 
 dev_dependencies:
   flutter_test:

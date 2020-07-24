@@ -17,6 +17,8 @@ class FranchiseProvider with ChangeNotifier {
   String _whatsapp;
   String _kategori;
   String _promo;
+  String _disetujui;
+  String _pengusul;
   String _temp_file1;
   String _temp_file2;
   String _temp_file3;
@@ -41,6 +43,10 @@ class FranchiseProvider with ChangeNotifier {
   String get kategori => _kategori;
 
   String get promo => _promo;
+
+  String get disetujui => _disetujui;
+
+  String get pengusul => _pengusul;
 
   String get temp_file1 => _temp_file1;
 
@@ -89,6 +95,14 @@ class FranchiseProvider with ChangeNotifier {
     _promo = value;
   }
 
+  set disetujui(String value) {
+    _disetujui = value;
+  }
+
+  set pengusul(String value) {
+    _pengusul = value;
+  }
+
   set temp_file1(String value) {
     _temp_file1 = value;
   }
@@ -112,21 +126,23 @@ class FranchiseProvider with ChangeNotifier {
     whatsapp = franchise.whatsapp;
     kategori = franchise.kategori;
     promo = franchise.promo;
+    disetujui = franchise.disetujui;
+    pengusul = franchise.pengusul;
   }
 
   save() async {
     Franchise franchise;
     franchise = Franchise(
         id: id,
-        foto1: temp_file1 != null
+        foto1: (temp_file1 != null && temp_file1 != '')
             ? await firestoreService.uploadFile(
                 'franchise/foto/' + id + '_foto1', File(temp_file1))
             : foto1,
-        foto2: temp_file2 != null
+        foto2: (temp_file2 != null && temp_file2 != '')
             ? await firestoreService.uploadFile(
                 'franchise/foto/' + id + '_foto2', File(temp_file2))
             : foto2,
-        foto3: temp_file3 != null
+        foto3: (temp_file3 != null && temp_file3 != '')
             ? await firestoreService.uploadFile(
                 'franchise/foto/' + id + '_foto3', File(temp_file3))
             : foto3,
@@ -135,7 +151,9 @@ class FranchiseProvider with ChangeNotifier {
         whatsapp: whatsapp,
         deskripsi: deskripsi,
         kategori: kategori,
-        promo: promo);
+        promo: promo,
+        disetujui: disetujui,
+        pengusul: pengusul);
 
     firestoreService.saveFranchise(franchise);
   }

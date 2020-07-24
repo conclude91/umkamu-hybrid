@@ -4,28 +4,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:umkamu/models/user.dart';
-import 'package:umkamu/pages/user_form.dart';
 import 'package:umkamu/utils/theme.dart';
 
-class UserList extends StatefulWidget {
-  static const String id = "userlist";
+class LeaderList extends StatefulWidget {
+  static const String id = "leaderlist";
 
   @override
-  _UserListState createState() => _UserListState();
+  _LeaderListState createState() => _LeaderListState();
 }
 
-class _UserListState extends State<UserList> {
+class _LeaderListState extends State<LeaderList> {
   TextEditingController _filterController = new TextEditingController();
   List<User> _listUser = [];
   List<User> _filterListUser = [];
-  String _access;
 
   @override
   void initState() {
     super.initState();
-    _getPreferences();
   }
 
   @override
@@ -52,18 +48,11 @@ class _UserListState extends State<UserList> {
     setState(() {});
   }
 
-  _getPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _access = prefs.getString('access') ?? '';
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (Provider.of<List<User>>(context) != null) {
-      _listUser = Provider.of<List<User>>(context).toList();
-    }
+    _listUser = Provider.of<List<User>>(context)
+        .where((user) => user.leader == 'Ya')
+        .toList();
 
     return Scaffold(
       backgroundColor: backgroundColor,
@@ -72,7 +61,7 @@ class _UserListState extends State<UserList> {
         centerTitle: true,
         elevation: 0,
         title: Text(
-          'List Pengguna',
+          'Leader',
           style: TextStyle(
             color: primaryContentColor,
             fontSize: mediumSize,
@@ -80,16 +69,10 @@ class _UserListState extends State<UserList> {
             fontWeight: fontBold,
           ),
         ),
-       /* leading: IconButton(
+        leading: IconButton(
           icon: Icon(Icons.arrow_back, color: primaryContentColor),
           onPressed: () => Navigator.of(context).pop(),
-        ),*/
-        /*actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add, color: primaryContentColor),
-            onPressed: () => Navigator.of(context).pushNamed(UserForm.id),
-          ),
-        ],*/
+        ),
         bottom: PreferredSize(
           child: Container(
             color: shadow,
@@ -139,12 +122,6 @@ class _UserListState extends State<UserList> {
                               margin: new EdgeInsets.symmetric(
                                   horizontal: 10.0, vertical: 6.0),
                               child: InkWell(
-                                onTap: () {
-                                  if (_access == 'Admin') {
-                                    Navigator.of(context).pushNamed(UserForm.id,
-                                        arguments: _filterListUser[index]);
-                                  }
-                                },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(3),
@@ -375,12 +352,6 @@ class _UserListState extends State<UserList> {
                               margin: new EdgeInsets.symmetric(
                                   horizontal: 10.0, vertical: 6.0),
                               child: InkWell(
-                                onTap: () {
-                                  if (_access == 'Admin') {
-                                    Navigator.of(context).pushNamed(UserForm.id,
-                                        arguments: _listUser[index]);
-                                  }
-                                },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(3),

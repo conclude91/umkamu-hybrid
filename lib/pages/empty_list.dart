@@ -42,10 +42,10 @@ class _EmptyListState extends State<EmptyList> {
             fontWeight: fontBold,
           ),
         ),
-        leading: IconButton(
+        /*leading: IconButton(
           icon: Icon(Icons.arrow_back, color: primaryContentColor),
           onPressed: () => Navigator.of(context).pop(),
-        ),
+        ),*/
         /*actions: <Widget>[
           IconButton(
             icon: Icon(Icons.add, color: primaryContentColor),

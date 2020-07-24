@@ -32,10 +32,22 @@ class _RegisterState extends State<Register> {
   @override
   void initState() {
     super.initState();
-    _namaController.text = '';
-    _emailController.text = '';
-    _passwordController.text = '';
-    _whatsappController.text = '';
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      _userProvider = Provider.of<UserProvider>(context, listen: false);
+      _userProvider.id = DateTime.now().millisecondsSinceEpoch.toString();
+      _userProvider.foto = 'assets/images/akun.jpg';
+      _userProvider.jenis_kelamin = 'Laki-Laki';
+      _userProvider.rekening = '0';
+      _userProvider.poin = 0;
+      _userProvider.komisi = 0;
+      _userProvider.royalty = 0;
+      _userProvider.tipe = 'Konsumen';
+      _userProvider.leader = 'Tidak';
+      _namaController.text = '';
+      _emailController.text = '';
+      _passwordController.text = '';
+      _whatsappController.text = '';
+    });
   }
 
   @override
@@ -96,17 +108,6 @@ class _RegisterState extends State<Register> {
           .toList();
     }
 
-    _userProvider = Provider.of<UserProvider>(context);
-    _userProvider.id = DateTime.now().millisecondsSinceEpoch.toString();
-    _userProvider.foto = 'assets/images/akun.jpg';
-    _userProvider.jenis_kelamin = 'Laki-Laki';
-    _userProvider.rekening = '0';
-    _userProvider.poin = 0;
-    _userProvider.komisi = 0;
-    _userProvider.royalty = 0;
-    _userProvider.tipe = 'Konsumen';
-    _userProvider.leader = 'Tidak';
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -162,6 +163,7 @@ class _RegisterState extends State<Register> {
                     ),
                   ),
                   Expanded(
+                    flex: 10,
                     child: TextField(
                       controller: _namaController,
                       textAlign: TextAlign.center,
@@ -210,6 +212,7 @@ class _RegisterState extends State<Register> {
                     ),
                   ),
                   Expanded(
+                    flex: 10,
                     child: TextField(
                       controller: _emailController,
                       maxLength: 50,
@@ -258,6 +261,7 @@ class _RegisterState extends State<Register> {
                     ),
                   ),
                   Expanded(
+                    flex: 10,
                     child: TextField(
                       controller: _passwordController,
                       maxLength: 50,
@@ -308,6 +312,7 @@ class _RegisterState extends State<Register> {
                     ),
                   ),
                   Expanded(
+                    flex: 10,
                     child: TextField(
                       controller: _whatsappController,
                       textAlign: TextAlign.center,
@@ -339,6 +344,7 @@ class _RegisterState extends State<Register> {
               child: Row(
                 children: <Widget>[
                   Expanded(
+                    flex: 10,
                     child: FlatButton(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),
@@ -407,9 +413,7 @@ class _RegisterState extends State<Register> {
                 ],
               ),
             ),
-            Expanded(
-              child: Divider(),
-            ),
+            Divider(),
             Container(
               width: MediaQuery.of(context).size.width,
               margin: const EdgeInsets.only(
@@ -418,6 +422,7 @@ class _RegisterState extends State<Register> {
               child: Row(
                 children: <Widget>[
                   Expanded(
+                    flex: 10,
                     child: FlatButton(
                       padding: const EdgeInsets.symmetric(
                           vertical: 20.0, horizontal: 20.0),

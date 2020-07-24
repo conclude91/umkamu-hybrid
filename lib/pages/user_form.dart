@@ -14,8 +14,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:umkamu/models/user.dart';
 import 'package:umkamu/providers/user_provider.dart';
 import 'package:umkamu/utils/theme.dart';
-import 'package:umkamu/providers/franchise_provider.dart';
-import 'package:umkamu/models/franchise.dart';
 
 class UserForm extends StatefulWidget {
   static const String id = 'userform';
@@ -40,8 +38,6 @@ class _UserFormState extends State<UserForm> {
   var _tipeOptions = ['Konsumen', 'Produsen', 'Admin'];
   var _jenisKelaminOptions = ['Laki-Laki', 'Perempuan'];
   UserProvider _userProvider;
-  List<Franchise> _listFranchise;
-  FranchiseProvider _franchiseProvider;
   File _temp_file;
   final _picker = ImagePicker();
   String _access, _id;
@@ -52,8 +48,6 @@ class _UserFormState extends State<UserForm> {
     _getPreferences();
     Future.delayed(Duration.zero, () {
       _userProvider = Provider.of<UserProvider>(context, listen: false);
-      _franchiseProvider =
-          Provider.of<FranchiseProvider>(context, listen: false);
       if (widget.user != null) {
         _namaController.text = widget.user.nama;
         _emailController.text = widget.user.email;
@@ -64,6 +58,7 @@ class _UserFormState extends State<UserForm> {
         _komisiController.text = widget.user.komisi.toString();
         _royaltyController.text = widget.user.royalty.toString();
         _userProvider.user = widget.user;
+        _userProvider.temp_file = '';
       } else {
         _namaController.text = '';
         _emailController.text = '';
@@ -80,6 +75,7 @@ class _UserFormState extends State<UserForm> {
         _userProvider.jenis_kelamin = 'Laki-Laki';
         _userProvider.tipe = 'Konsumen';
         _userProvider.leader = 'Tidak';
+        _userProvider.temp_file = '';
       }
     });
   }
@@ -147,9 +143,6 @@ class _UserFormState extends State<UserForm> {
           BasicDialogAction(
             title: Text("Hapus"),
             onPressed: () {
-              if (_userProvider.tipe == 'Produsen') {
-                _franchiseProvider.remove(widget.user.id);
-              }
               _userProvider.remove(widget.user.id);
               Navigator.pop(context);
               Navigator.pop(context);
@@ -179,17 +172,6 @@ class _UserFormState extends State<UserForm> {
 
   @override
   Widget build(BuildContext context) {
-    if (_access == 'Admin' && _userProvider.tipe == 'Produsen') {
-      _listFranchise = Provider.of<List<Franchise>>(context)
-          .where((franchise) => franchise.id == _userProvider.id)
-          .toList();
-      if (_listFranchise.length == 1) {
-        _franchiseProvider.foto1 = _listFranchise[0].foto1;
-        _franchiseProvider.foto2 = _listFranchise[0].foto2;
-        _franchiseProvider.foto3 = _listFranchise[0].foto3;
-      }
-    }
-
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
@@ -208,7 +190,6 @@ class _UserFormState extends State<UserForm> {
         leading: IconButton(
             icon: Icon(Icons.arrow_back, color: primaryContentColor),
             onPressed: () {
-              _userProvider.temp_file = null;
               Navigator.of(context).pop();
             }),
         bottom: PreferredSize(
@@ -233,7 +214,8 @@ class _UserFormState extends State<UserForm> {
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
                   child: CircleAvatar(
-                    backgroundImage: (widget.user != null && _temp_file == null)
+                    backgroundImage:
+                    (widget.user != null && _temp_file == null)
                         ? (widget.user.foto == 'assets/images/akun.jpg')
                             ? AssetImage(widget.user.foto)
                             : CachedNetworkImageProvider(widget.user.foto)
