@@ -51,6 +51,7 @@ dependencies:
   ntp: ^1.0.7
   intl: ^0.16.1
   mailer2: ^1.2.5
+  double_back_to_close_app: ^1.2.0
 
 dev_dependencies:
   flutter_test:

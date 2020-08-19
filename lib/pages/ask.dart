@@ -1,12 +1,16 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:provider/provider.dart';
+import 'package:umkamu/models/contact.dart';
 import 'package:umkamu/models/franchise.dart';
 import 'package:umkamu/utils/constanta.dart';
 import 'package:umkamu/utils/theme.dart';
+
+import 'franchise_detail.dart';
 
 class Ask extends StatefulWidget {
   static const String id = "ask";
@@ -16,9 +20,11 @@ class Ask extends StatefulWidget {
 }
 
 class _AskState extends State<Ask> {
-  List<Franchise> _listFranchise;
-  final List<NetworkImage> _listImagePromo = List<NetworkImage>();
-  double _screenWidth, _screenHeight;
+  List<Franchise> _listFranchise = [];
+  List<Contact> _listContact = [];
+  String _noTanya = '';
+  String _noTeknis = '';
+  List<InkWell> _listImagePromo = [];
 
   @override
   void initState() {
@@ -30,7 +36,13 @@ class _AskState extends State<Ask> {
     super.dispose();
   }
 
-  _showConfirmationAlert(BuildContext context, String msg) {
+  _replaceCharAt(String oldString, int index, String newChar) {
+    return oldString.substring(0, index) +
+        newChar +
+        oldString.substring(index + 1);
+  }
+
+  _showConfirmationAskAlert(BuildContext context, String msg) {
     showPlatformDialog(
       context: context,
       builder: (_) => BasicDialogAlert(
@@ -58,7 +70,44 @@ class _AskState extends State<Ask> {
           BasicDialogAction(
             title: Text("Teruskan"),
             onPressed: () {
-              FlutterOpenWhatsapp.sendSingleMessage(adminContact, msg);
+              FlutterOpenWhatsapp.sendSingleMessage(_noTanya, msg);
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  _showConfirmationTechAlert(BuildContext context, String msg) {
+    showPlatformDialog(
+      context: context,
+      builder: (_) => BasicDialogAlert(
+        title: Text(
+          "Ada yang bisa dibantu ?",
+          style: TextStyle(
+              fontFamily: primaryFont,
+              fontSize: mediumSize,
+              color: primaryContentColor),
+        ),
+        content: Text(
+          msg + '\n\n* Pesan ini akan diteruskan ke admin.',
+          style: TextStyle(
+              fontFamily: primaryFont,
+              fontSize: tinySize,
+              color: primaryContentColor),
+        ),
+        actions: <Widget>[
+          BasicDialogAction(
+            title: Text("Batalkan"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          BasicDialogAction(
+            title: Text("Teruskan"),
+            onPressed: () {
+              FlutterOpenWhatsapp.sendSingleMessage(_noTeknis, msg);
               Navigator.pop(context);
             },
           ),
@@ -69,15 +118,31 @@ class _AskState extends State<Ask> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    _screenWidth = size.width;
-    _screenHeight = size.height;
+    if (Provider.of<List<Contact>>(context) != null) {
+      _listContact = Provider.of<List<Contact>>(context, listen: false)
+          .where((contact) => contact.id == '0')
+          .toList();
+    }
+    if (_listContact.length == 1) {
+      _noTanya = _replaceCharAt(_listContact[0].no_tanya, 0, '+62');
+      _noTeknis = _replaceCharAt(_listContact[0].no_teknis, 0, '+62');
+    }
     _listFranchise = Provider.of<List<Franchise>>(context)
         .where((franchise) => franchise.promo.toString() == 'Ya')
+        .where((franchise) => franchise.disetujui == 'Ya')
         .toList();
     if (_listImagePromo.length == 0) {
+      _listImagePromo.clear();
       for (int i = 0; i < _listFranchise.length; i++) {
-        _listImagePromo.add(NetworkImage(_listFranchise[i].foto1));
+        _listImagePromo.add(
+          InkWell(
+            onTap: () => Navigator.of(context).pushNamed(FranchiseDetail.id,
+                arguments: _listFranchise[i]),
+            child: CachedNetworkImage(
+              imageUrl: _listFranchise[i].foto1,
+            ),
+          ),
+        );
       }
     }
 
@@ -114,9 +179,11 @@ class _AskState extends State<Ask> {
         children: <Widget>[
           SizedBox(
             height: 200,
-            width: _screenWidth,
+            width: MediaQuery.of(context).size.width,
             child: Carousel(
-              images: _listImagePromo,
+              images: (_listImagePromo.length > 0)
+                  ? _listImagePromo
+                  : [ExactAssetImage('assets/images/no-result-found.png')],
               dotSize: 3.0,
               dotSpacing: 15.0,
               dotColor: secondaryContentColor,
@@ -142,14 +209,16 @@ class _AskState extends State<Ask> {
                       flex: 3,
                       child: InkWell(
                         onTap: () {
-                          _showConfirmationAlert(context, msgAdmin);
+                          _showConfirmationAskAlert(context, msgAdmin);
                         },
                         child: Column(
                           children: <Widget>[
                             Flexible(
                               flex: 6,
-                              child: Icon(Icons.account_circle,
-                                  size: 50, color: primaryContentColor),
+                              child: Image(
+                                height: 50,
+                                image: AssetImage('assets/images/admin.png'),
+                              ),
                             ),
                             SizedBox(
                               height: 5,
@@ -172,14 +241,16 @@ class _AskState extends State<Ask> {
                       flex: 4,
                       child: InkWell(
                         onTap: () {
-                          _showConfirmationAlert(context, msgKonsultasi);
+                          _showConfirmationAskAlert(context, msgKonsultasi);
                         },
                         child: Column(
                           children: <Widget>[
                             Flexible(
                               flex: 6,
-                              child: Icon(Icons.contact_phone,
-                                  size: 50, color: primaryContentColor),
+                              child: Image(
+                                height: 50,
+                                image: AssetImage('assets/images/consult.png'),
+                              ),
                             ),
                             SizedBox(
                               height: 5,
@@ -202,7 +273,7 @@ class _AskState extends State<Ask> {
                       flex: 3,
                       child: InkWell(
                         onTap: () {
-                          _showConfirmationAlert(context, msgCaraGabung);
+                          _showConfirmationAskAlert(context, msgCaraGabung);
                         },
                         child: Column(
                           children: <Widget>[
@@ -244,7 +315,7 @@ class _AskState extends State<Ask> {
                       flex: 3,
                       child: InkWell(
                         onTap: () {
-                          _showConfirmationAlert(context, msgCaraJual);
+                          _showConfirmationAskAlert(context, msgCaraJual);
                         },
                         child: Column(
                           children: <Widget>[
@@ -278,7 +349,7 @@ class _AskState extends State<Ask> {
                       flex: 4,
                       child: InkWell(
                         onTap: () {
-                          _showConfirmationAlert(context, msgCaraBeli);
+                          _showConfirmationAskAlert(context, msgCaraBeli);
                         },
                         child: Column(
                           children: <Widget>[
@@ -311,7 +382,7 @@ class _AskState extends State<Ask> {
                       flex: 3,
                       child: InkWell(
                         onTap: () {
-                          _showConfirmationAlert(context, msgPasangIklan);
+                          _showConfirmationTechAlert(context, msgPasangIklan);
                         },
                         child: Column(
                           children: <Widget>[
@@ -353,7 +424,7 @@ class _AskState extends State<Ask> {
                       flex: 3,
                       child: InkWell(
                         onTap: () {
-                          _showConfirmationAlert(context, msgKirimBerita);
+                          _showConfirmationTechAlert(context, msgKirimBerita);
                         },
                         child: Column(
                           children: <Widget>[
@@ -386,7 +457,7 @@ class _AskState extends State<Ask> {
                       flex: 4,
                       child: InkWell(
                         onTap: () {
-                          _showConfirmationAlert(context, msgKirimFoto);
+                          _showConfirmationTechAlert(context, msgKirimFoto);
                         },
                         child: Column(
                           children: <Widget>[
@@ -419,7 +490,7 @@ class _AskState extends State<Ask> {
                       flex: 3,
                       child: InkWell(
                         onTap: () {
-                          _showConfirmationAlert(context, msgKirimProfil);
+                          _showConfirmationTechAlert(context, msgKirimProfil);
                         },
                         child: Column(
                           children: <Widget>[

@@ -61,7 +61,10 @@ class _FranchiseFormState extends State<FranchiseForm> {
         _whatsappController.text = '';
         _franchiseProvider.franchise = Franchise();
         _franchiseProvider.kategori = 'Jajanan';
-        _franchiseProvider.id = DateTime.now().millisecondsSinceEpoch.toString();
+        _franchiseProvider.id = DateTime
+            .now()
+            .millisecondsSinceEpoch
+            .toString();
         _franchiseProvider.promo = 'Tidak';
         _franchiseProvider.disetujui = 'Tidak';
         _franchiseProvider.pengusul = _idUser ?? '0';
@@ -161,26 +164,27 @@ class _FranchiseFormState extends State<FranchiseForm> {
   _showConfirmationAlert(BuildContext context) {
     showPlatformDialog(
       context: context,
-      builder: (_) => BasicDialogAlert(
-        title: Text("Hapus Data Ini ?"),
-        content: Text("Data yang dihapus tidak bisa dipulihkan."),
-        actions: <Widget>[
-          BasicDialogAction(
-            title: Text("Batalkan"),
-            onPressed: () {
-              Navigator.pop(context);
-            },
+      builder: (_) =>
+          BasicDialogAlert(
+            title: Text("Hapus Data Ini ?"),
+            content: Text("Data yang dihapus tidak bisa dipulihkan."),
+            actions: <Widget>[
+              BasicDialogAction(
+                title: Text("Batalkan"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              BasicDialogAction(
+                title: Text("Hapus"),
+                onPressed: () {
+                  _franchiseProvider.remove(widget.franchise.id);
+                  Navigator.pop(context);
+                  Navigator.pop(context);
+                },
+              ),
+            ],
           ),
-          BasicDialogAction(
-            title: Text("Hapus"),
-            onPressed: () {
-              _franchiseProvider.remove(widget.franchise.id);
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-          ),
-        ],
-      ),
     );
   }
 
@@ -239,7 +243,7 @@ class _FranchiseFormState extends State<FranchiseForm> {
             initialValue: {},
             child: Padding(
               padding:
-                  EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 10),
+              EdgeInsets.only(left: 16, right: 16, top: 16, bottom: 10),
               child: Column(
                 children: <Widget>[
                   Container(
@@ -258,17 +262,20 @@ class _FranchiseFormState extends State<FranchiseForm> {
                         ),
                         InkWell(
                           child: Container(
-                            width: MediaQuery.of(context).size.width,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
                             height: 200,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: (widget.franchise != null &&
-                                        _temp_file1 == null)
+                                    _temp_file1 == null)
                                     ? CachedNetworkImageProvider(
-                                        widget.franchise.foto1)
+                                    widget.franchise.foto1)
                                     : (_temp_file1 != null)
-                                        ? AssetImage(_temp_file1.path)
-                                        : AssetImage('assets/images/photo.png'),
+                                    ? FileImage(File(_temp_file1.path))
+                                    : AssetImage('assets/images/photo.png'),
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -297,17 +304,20 @@ class _FranchiseFormState extends State<FranchiseForm> {
                         ),
                         InkWell(
                           child: Container(
-                            width: MediaQuery.of(context).size.width,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
                             height: 200,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: (widget.franchise != null &&
-                                        _temp_file2 == null)
+                                    _temp_file2 == null)
                                     ? CachedNetworkImageProvider(
-                                        widget.franchise.foto2)
+                                    widget.franchise.foto2)
                                     : (_temp_file2 != null)
-                                        ? AssetImage(_temp_file2.path)
-                                        : AssetImage('assets/images/photo.png'),
+                                    ? FileImage(File(_temp_file2.path))
+                                    : AssetImage('assets/images/photo.png'),
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -336,17 +346,20 @@ class _FranchiseFormState extends State<FranchiseForm> {
                         ),
                         InkWell(
                           child: Container(
-                            width: MediaQuery.of(context).size.width,
+                            width: MediaQuery
+                                .of(context)
+                                .size
+                                .width,
                             height: 200,
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: (widget.franchise != null &&
-                                        _temp_file3 == null)
+                                    _temp_file3 == null)
                                     ? CachedNetworkImageProvider(
-                                        widget.franchise.foto3)
+                                    widget.franchise.foto3)
                                     : (_temp_file3 != null)
-                                        ? AssetImage(_temp_file3.path)
-                                        : AssetImage('assets/images/photo.png'),
+                                    ? FileImage(File(_temp_file3.path))
+                                    : AssetImage('assets/images/photo.png'),
                                 fit: BoxFit.contain,
                               ),
                             ),
@@ -443,7 +456,8 @@ class _FranchiseFormState extends State<FranchiseForm> {
                     ),
                     validators: [FormBuilderValidators.required()],
                     items: _kategoriOptions
-                        .map((kategori) => DropdownMenuItem(
+                        .map((kategori) =>
+                        DropdownMenuItem(
                             value: kategori, child: Text('$kategori')))
                         .toList(),
                     initialValue: (widget.franchise != null)
@@ -452,23 +466,23 @@ class _FranchiseFormState extends State<FranchiseForm> {
                   ),
                   (_access == 'Admin')
                       ? FormBuilderRadioGroup(
-                          attribute: 'promo',
-                          decoration: InputDecoration(labelText: 'Promo'),
-                          onChanged: (value) =>
-                              _franchiseProvider.promo = value.toString(),
-                          options: [
-                            FormBuilderFieldOption(
-                              value: 'Ya',
-                            ),
-                            FormBuilderFieldOption(
-                              value: 'Tidak',
-                            ),
-                          ],
-                          initialValue: (widget.franchise != null)
-                              ? widget.franchise.promo
-                              : 'Tidak',
-                          validators: [FormBuilderValidators.required()],
-                        )
+                    attribute: 'promo',
+                    decoration: InputDecoration(labelText: 'Promo'),
+                    onChanged: (value) =>
+                    _franchiseProvider.promo = value.toString(),
+                    options: [
+                      FormBuilderFieldOption(
+                        value: 'Ya',
+                      ),
+                      FormBuilderFieldOption(
+                        value: 'Tidak',
+                      ),
+                    ],
+                    initialValue: (widget.franchise != null)
+                        ? widget.franchise.promo
+                        : 'Tidak',
+                    validators: [FormBuilderValidators.required()],
+                  )
                       : SizedBox(),
                   (_access == 'Admin')
                       ? FormBuilderRadioGroup(
@@ -512,8 +526,8 @@ class _FranchiseFormState extends State<FranchiseForm> {
               onPressed: () {
                 if (_fbKey.currentState.saveAndValidate() &&
                     ((_temp_file1 != null &&
-                            _temp_file2 != null &&
-                            _temp_file3 != null) ||
+                        _temp_file2 != null &&
+                        _temp_file3 != null) ||
                         widget.franchise != null)) {
                   _franchiseProvider.save();
                   _onLoading();
@@ -535,28 +549,28 @@ class _FranchiseFormState extends State<FranchiseForm> {
           ),
           (widget.franchise != null && _access == 'Admin')
               ? Padding(
-                  padding:
-                      const EdgeInsets.only(left: 16, right: 16, bottom: 16),
-                  child: MaterialButton(
-                    color: primaryColor,
-                    child: Text(
-                      'Hapus',
-                      style: TextStyle(
-                        fontFamily: primaryFont,
-                        fontSize: smallSize,
-                        color: secondaryContentColor,
-                      ),
-                    ),
-                    onPressed: () {
-                      _showConfirmationAlert(context);
-                    },
-                    height: 50,
-                    minWidth: double.infinity,
-                  ),
-                )
-              : SizedBox(
-                  height: 5,
+            padding:
+            const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+            child: MaterialButton(
+              color: primaryColor,
+              child: Text(
+                'Hapus',
+                style: TextStyle(
+                  fontFamily: primaryFont,
+                  fontSize: smallSize,
+                  color: secondaryContentColor,
                 ),
+              ),
+              onPressed: () {
+                _showConfirmationAlert(context);
+              },
+              height: 50,
+              minWidth: double.infinity,
+            ),
+          )
+              : SizedBox(
+            height: 5,
+          ),
         ],
       ),
     );

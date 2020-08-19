@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,6 +11,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:umkamu/models/contact.dart';
 import 'package:umkamu/models/franchise.dart';
 import 'package:umkamu/models/user.dart';
 import 'package:umkamu/pages/ask.dart';
@@ -38,7 +40,6 @@ class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   List<User> _listUser = [];
   List<Franchise> _listFranchisePromo = [];
-  List<Franchise> _myFranchise = [];
   List<InkWell> _listImagePromo = [];
   bool isCollapsed = true;
   Duration duration = const Duration(milliseconds: 250);
@@ -49,11 +50,13 @@ class _DashboardState extends State<Dashboard>
   bool _isLogin;
   String _id;
   String _access;
-  int _bottomSelectedIndex = 2;
+  int _bottomSelectedIndex = 0;
   PageController _pageController = PageController(
-    initialPage: 2,
+    initialPage: 0,
     keepPage: true,
   );
+  List<Contact> _listContact = [];
+  String _noModal = '';
 
   @override
   void initState() {
@@ -102,7 +105,7 @@ class _DashboardState extends State<Dashboard>
           BasicDialogAction(
             title: Text("Teruskan"),
             onPressed: () {
-              FlutterOpenWhatsapp.sendSingleMessage(adminContact, msg);
+              FlutterOpenWhatsapp.sendSingleMessage(_noModal, msg);
               Navigator.pop(context);
             },
           ),
@@ -163,7 +166,7 @@ class _DashboardState extends State<Dashboard>
             title: Text("Ajukan"),
             onPressed: () {
               FlutterOpenWhatsapp.sendSingleMessage(
-                  adminContact, 'Hai Admin,\n\n' + msg + _getIdentityMessage());
+                  _noModal, 'Hai Admin,\n\n' + msg + _getIdentityMessage());
               Navigator.pop(context);
             },
           ),
@@ -325,8 +328,26 @@ class _DashboardState extends State<Dashboard>
     });
   }
 
+  _replaceCharAt(String oldString, int index, String newChar) {
+    return oldString.substring(0, index) +
+        newChar +
+        oldString.substring(index + 1);
+  }
+
+  _onBackpressed(int index) {
+    _bottomTapped(index);
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (Provider.of<List<Contact>>(context) != null) {
+      _listContact = Provider.of<List<Contact>>(context, listen: false)
+          .where((contact) => contact.id == '0')
+          .toList();
+    }
+    if (_listContact.length == 1) {
+      _noModal = _replaceCharAt(_listContact[0].no_modal, 0, '+62');
+    }
     if (Provider.of<List<User>>(context) != null) {
       _listUser = Provider.of<List<User>>(context)
           .where((user) => user.id == _id)
@@ -336,9 +357,6 @@ class _DashboardState extends State<Dashboard>
       _listFranchisePromo = Provider.of<List<Franchise>>(context)
           .where((franchise) => franchise.promo == 'Ya')
           .where((franchise) => franchise.disetujui == 'Ya')
-          .toList();
-      _myFranchise = Provider.of<List<Franchise>>(context)
-          .where((franchise) => franchise.id == _listUser[0].id)
           .toList();
     }
     if (_listFranchisePromo != null && _listFranchisePromo.length > 0) {
@@ -361,7 +379,21 @@ class _DashboardState extends State<Dashboard>
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          navDrawer(context),
+          (isCollapsed ==  false)
+              ? WillPopScope(
+                  onWillPop: () {
+                    setState(() {
+                      if (isCollapsed) {
+                        _animationController.forward();
+                      } else {
+                        _animationController.reverse();
+                      }
+                      isCollapsed = !isCollapsed;
+                    });
+                  },
+                  child: navDrawer(context),
+                )
+              : navDrawer(context),
           dashboard(context),
         ],
       ),
@@ -668,10 +700,10 @@ class _DashboardState extends State<Dashboard>
                         ],
                       ),
                     ),
-                    InkWell(
+                    /*InkWell(
                       onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(EmptyList.id, arguments: 'Cabang');
+                        Navigator.of(context).pushNamed(UnderConstruction.id,
+                            arguments: 'Cabang');
                       },
                       child: Column(
                         children: <Widget>[
@@ -697,7 +729,7 @@ class _DashboardState extends State<Dashboard>
                           ),
                         ],
                       ),
-                    ),
+                    ),*/
                     /*InkWell(
                             onTap: () {
                               Navigator.of(context).pushNamed(FranchiseList.id,
@@ -916,10 +948,10 @@ class _DashboardState extends State<Dashboard>
                         ],
                       ),
                     ),
-                    InkWell(
+                    /*InkWell(
                       onTap: () {
-                        Navigator.of(context)
-                            .pushNamed(EmptyList.id, arguments: 'Profit');
+                        Navigator.of(context).pushNamed(UnderConstruction.id,
+                            arguments: 'Profit');
                       },
                       child: Column(
                         children: <Widget>[
@@ -945,7 +977,7 @@ class _DashboardState extends State<Dashboard>
                           ),
                         ],
                       ),
-                    ),
+                    ),*/
                     InkWell(
                       onTap: () {
                         Navigator.of(context).pushNamed(Supplier.id);
@@ -1102,16 +1134,38 @@ class _DashboardState extends State<Dashboard>
         _pageChanged(index);
       },
       children: <Widget>[
-        UnderConstruction('Rekomendasi'),
-        UnderConstruction('Feed'),
-        mainMenu(),
-        UnderConstruction('Notifikasi'),
-        UserList(),
-        /*EmptyList('Rekomendasi'),
-        EmptyList('Feed'),
-        mainMenu(),
-        EmptyList('Notifikasi'),
-        UserList(),*/
+       /* WillPopScope(
+          onWillPop: () {
+            _onBackpressed(0);
+          },
+          child: UnderConstruction('Rekomendasi'),
+        ),
+        WillPopScope(
+          onWillPop: () {
+            _onBackpressed(0);
+          },
+          child: UnderConstruction('Feed'),
+        ),*/
+        (isCollapsed == true)
+            ? DoubleBackToCloseApp(
+                snackBar: const SnackBar(
+                  content: Text('Tekan sekali lagi untuk menutup aplikasi'),
+                ),
+                child: mainMenu(),
+              )
+            : mainMenu(),
+        /*WillPopScope(
+          onWillPop: () {
+            _onBackpressed(0);
+          },
+          child: UnderConstruction('Notifikasi'),
+        ),*/
+        WillPopScope(
+          onWillPop: () {
+            _onBackpressed(0);
+          },
+          child: UserList(),
+        ),
       ],
     );
   }
@@ -1396,14 +1450,8 @@ class _DashboardState extends State<Dashboard>
                                     ),
                                   ),
                                   onTap: () {
-                                    Navigator.of(context).pushNamed(
-                                        FranchiseApprovedList.id);
-                                    /*_myFranchise.length > 0
-                                        ? Navigator.of(context).pushNamed(
-                                            FranchiseForm.id,
-                                            arguments: _myFranchise[0])
-                                        : Navigator.of(context)
-                                            .pushNamed(FranchiseForm.id);*/
+                                    Navigator.of(context)
+                                        .pushNamed(FranchiseApprovedList.id);
                                   },
                                 )
                               : SizedBox(),
@@ -1586,10 +1634,10 @@ class _DashboardState extends State<Dashboard>
               animationCurve: Curves.fastOutSlowIn,
               index: _bottomSelectedIndex,
               items: [
-                Icon(Icons.thumb_up,
+                /*Icon(Icons.thumb_up,
                     size: mediumSize, color: primaryContentColor),
                 Icon(Icons.library_books,
-                    size: mediumSize, color: primaryContentColor),
+                    size: mediumSize, color: primaryContentColor),*/
                 Image(
                   image: ExactAssetImage('assets/images/logo.png'),
                   width: tinySize,
@@ -1597,8 +1645,8 @@ class _DashboardState extends State<Dashboard>
                 ),
                 /*Icon(Icons.dashboard,
                     size: mediumSize, color: primaryContentColor),*/
-                Icon(Icons.notifications_active,
-                    size: mediumSize, color: primaryContentColor),
+                /*Icon(Icons.notifications_active,
+                    size: mediumSize, color: primaryContentColor),*/
                 Icon(Icons.account_circle,
                     size: mediumSize, color: primaryContentColor),
               ],

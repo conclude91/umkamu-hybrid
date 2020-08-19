@@ -11,7 +11,9 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:umkamu/models/contact.dart';
 import 'package:umkamu/models/user.dart';
+import 'package:umkamu/providers/contact_provider.dart';
 import 'package:umkamu/providers/user_provider.dart';
 import 'package:umkamu/utils/theme.dart';
 
@@ -35,9 +37,15 @@ class _UserFormState extends State<UserForm> {
   final _poinController = TextEditingController();
   final _komisiController = TextEditingController();
   final _royaltyController = TextEditingController();
+  final _noModalController = TextEditingController();
+  final _noFranchiseController = TextEditingController();
+  final _noTanyaController = TextEditingController();
+  final _noTeknisController = TextEditingController();
   var _tipeOptions = ['Konsumen', 'Produsen', 'Admin'];
   var _jenisKelaminOptions = ['Laki-Laki', 'Perempuan'];
   UserProvider _userProvider;
+  ContactProvider _contactProvider;
+  List<Contact> _listContact = [];
   File _temp_file;
   final _picker = ImagePicker();
   String _access, _id;
@@ -48,6 +56,12 @@ class _UserFormState extends State<UserForm> {
     _getPreferences();
     Future.delayed(Duration.zero, () {
       _userProvider = Provider.of<UserProvider>(context, listen: false);
+      _contactProvider = Provider.of<ContactProvider>(context, listen: false);
+      if (Provider.of<List<Contact>>(context, listen: false) != null) {
+        _listContact = Provider.of<List<Contact>>(context, listen: false)
+            .where((contact) => contact.id == '0')
+            .toList();
+      }
       if (widget.user != null) {
         _namaController.text = widget.user.nama;
         _emailController.text = widget.user.email;
@@ -77,6 +91,19 @@ class _UserFormState extends State<UserForm> {
         _userProvider.leader = 'Tidak';
         _userProvider.temp_file = '';
       }
+      if (_listContact.length == 1) {
+        _noModalController.text = _listContact[0].no_modal;
+        _noFranchiseController.text = _listContact[0].no_franchise;
+        _noTanyaController.text = _listContact[0].no_tanya;
+        _noTeknisController.text = _listContact[0].no_teknis;
+        _contactProvider.contact = _listContact[0];
+      } else {
+        _contactProvider.contact = Contact();
+        _noModalController.text = '';
+        _noFranchiseController.text = '';
+        _noTanyaController.text = '';
+        _noTeknisController.text = '';
+      }
     });
   }
 
@@ -91,6 +118,10 @@ class _UserFormState extends State<UserForm> {
     _poinController.dispose();
     _komisiController.dispose();
     _royaltyController.dispose();
+    _noModalController.dispose();
+    _noTeknisController.dispose();
+    _noTanyaController.dispose();
+    _noFranchiseController.dispose();
   }
 
   _getPreferences() async {
@@ -214,13 +245,12 @@ class _UserFormState extends State<UserForm> {
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
                   child: CircleAvatar(
-                    backgroundImage:
-                    (widget.user != null && _temp_file == null)
+                    backgroundImage: (widget.user != null && _temp_file == null)
                         ? (widget.user.foto == 'assets/images/akun.jpg')
                             ? AssetImage(widget.user.foto)
                             : CachedNetworkImageProvider(widget.user.foto)
                         : _temp_file != null
-                            ? AssetImage(_temp_file.path)
+                            ? FileImage(File(_temp_file.path))
                             : AssetImage('assets/images/akun.jpg'),
                     radius: 75,
                   ),
@@ -463,23 +493,121 @@ class _UserFormState extends State<UserForm> {
                         )
                       : SizedBox(),
                   (_access == 'Admin')
-                      ? FormBuilderRadioGroup(
-                          attribute: 'leader',
-                          decoration: InputDecoration(labelText: 'Leader'),
+                      ? Padding(
+                          padding: EdgeInsets.only(top: 15),
+                          child: FormBuilderRadioGroup(
+                            attribute: 'leader',
+                            decoration: InputDecoration(labelText: 'Leader'),
+                            onChanged: (value) =>
+                                _userProvider.leader = value.toString(),
+                            options: [
+                              FormBuilderFieldOption(
+                                value: 'Ya',
+                              ),
+                              FormBuilderFieldOption(
+                                value: 'Tidak',
+                              ),
+                            ],
+                            initialValue: (widget.user != null)
+                                ? widget.user.leader
+                                : 'Tidak',
+                            validators: [FormBuilderValidators.required()],
+                          ),
+                        )
+                      : SizedBox(),
+                  (_access == 'Admin' && widget.user.id == _id)
+                      ? Padding(
+                          padding: EdgeInsets.only(top: 15),
+                          child: FormBuilderTextField(
+                            controller: _noModalController,
+                            onChanged: (value) =>
+                                _contactProvider.no_modal = value,
+                            attribute: 'no_modal',
+                            maxLines: 1,
+                            maxLength: 15,
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                              labelText: 'No Kontak Modal/Pencairan',
+                              labelStyle: TextStyle(
+                                color: primaryContentColor,
+                                fontSize: smallSize,
+                                fontFamily: primaryFont,
+                              ),
+                            ),
+                            validators: [
+                              FormBuilderValidators.required(),
+                              FormBuilderValidators.numeric(),
+                            ],
+                          ),
+                        )
+                      : SizedBox(),
+                  (_access == 'Admin' && widget.user.id == _id)
+                      ? FormBuilderTextField(
+                          controller: _noFranchiseController,
                           onChanged: (value) =>
-                              _userProvider.leader = value.toString(),
-                          options: [
-                            FormBuilderFieldOption(
-                              value: 'Ya',
+                              _contactProvider.no_franchise = value,
+                          attribute: 'no_franchise',
+                          maxLines: 1,
+                          maxLength: 15,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'No Kontak Franchise',
+                            labelStyle: TextStyle(
+                              color: primaryContentColor,
+                              fontSize: smallSize,
+                              fontFamily: primaryFont,
                             ),
-                            FormBuilderFieldOption(
-                              value: 'Tidak',
-                            ),
+                          ),
+                          validators: [
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.numeric(),
                           ],
-                          initialValue: (widget.user != null)
-                              ? widget.user.leader
-                              : 'Tidak',
-                          validators: [FormBuilderValidators.required()],
+                        )
+                      : SizedBox(),
+                  (_access == 'Admin' && widget.user.id == _id)
+                      ? FormBuilderTextField(
+                          controller: _noTanyaController,
+                          onChanged: (value) =>
+                              _contactProvider.no_tanya = value,
+                          attribute: 'no_tanya',
+                          maxLines: 1,
+                          maxLength: 15,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'No Kontak Tanya',
+                            labelStyle: TextStyle(
+                              color: primaryContentColor,
+                              fontSize: smallSize,
+                              fontFamily: primaryFont,
+                            ),
+                          ),
+                          validators: [
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.numeric(),
+                          ],
+                        )
+                      : SizedBox(),
+                  (_access == 'Admin' && widget.user.id == _id)
+                      ? FormBuilderTextField(
+                          controller: _noTeknisController,
+                          onChanged: (value) =>
+                              _contactProvider.no_teknis = value,
+                          attribute: 'no_teknis',
+                          maxLines: 1,
+                          maxLength: 15,
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                            labelText: 'No Kontak Teknis',
+                            labelStyle: TextStyle(
+                              color: primaryContentColor,
+                              fontSize: smallSize,
+                              fontFamily: primaryFont,
+                            ),
+                          ),
+                          validators: [
+                            FormBuilderValidators.required(),
+                            FormBuilderValidators.numeric(),
+                          ],
                         )
                       : SizedBox(),
                 ],
@@ -501,6 +629,10 @@ class _UserFormState extends State<UserForm> {
               onPressed: () {
                 if (_fbKey.currentState.saveAndValidate() &&
                     (_temp_file != null || widget.user != null)) {
+                  if (_access == 'Admin' && widget.user.id == _id) {
+                    _contactProvider.id = '0';
+                    _contactProvider.save();
+                  }
                   _userProvider.save();
                   _onLoading();
                 } else {

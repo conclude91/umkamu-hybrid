@@ -19,6 +19,7 @@ import 'package:umkamu/pages/supplier.dart';
 import 'package:umkamu/pages/underconstruction.dart';
 import 'package:umkamu/pages/user_form.dart';
 import 'package:umkamu/pages/user_list.dart';
+import 'package:umkamu/providers/contact_provider.dart';
 import 'package:umkamu/providers/franchise_provider.dart';
 import 'package:umkamu/providers/user_provider.dart';
 import 'package:umkamu/services/firestore_service.dart';
@@ -37,8 +38,10 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (context) => UserProvider()),
         ChangeNotifierProvider(create: (context) => FranchiseProvider()),
+        ChangeNotifierProvider(create: (context) => ContactProvider()),
         StreamProvider(create: (context) => firestoreService.getAllUser()),
         StreamProvider(create: (context) => firestoreService.getAllFranchise()),
+        StreamProvider(create: (context) => firestoreService.getAllContact()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

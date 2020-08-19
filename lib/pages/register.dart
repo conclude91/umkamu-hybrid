@@ -178,7 +178,7 @@ class _RegisterState extends State<Register> {
                           fontSize: tinySize,
                         ),
                         errorText:
-                            _namaError ? 'This value can\'t be empty' : null,
+                            _namaError ? 'Field ini harus diisi' : null,
                       ),
                       onChanged: (value) => _userProvider.nama = value,
                     ),
@@ -215,10 +215,8 @@ class _RegisterState extends State<Register> {
                     flex: 10,
                     child: TextField(
                       controller: _emailController,
-                      maxLength: 50,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
-                        counterText: '',
                         border: InputBorder.none,
                         hintText: 'email@mu.com',
                         hintStyle: TextStyle(
@@ -227,7 +225,7 @@ class _RegisterState extends State<Register> {
                           fontSize: tinySize,
                         ),
                         errorText:
-                            _emailError ? 'This value can\'t be empty' : null,
+                            _emailError ? 'Field ini harus diisi' : null,
                       ),
                       onChanged: (value) => _userProvider.email = value,
                     ),
@@ -264,11 +262,8 @@ class _RegisterState extends State<Register> {
                     flex: 10,
                     child: TextField(
                       controller: _passwordController,
-                      maxLength: 50,
-//                      obscureText: true,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
-                        counterText: '',
                         border: InputBorder.none,
                         hintText: 'Password',
                         hintStyle: TextStyle(
@@ -277,7 +272,7 @@ class _RegisterState extends State<Register> {
                           fontSize: tinySize,
                         ),
                         errorText: _passwordError
-                            ? 'This value can\'t be empty'
+                            ? 'Field ini harus diisi'
                             : null,
                       ),
                       onChanged: (value) => _userProvider.password = value,
@@ -328,7 +323,7 @@ class _RegisterState extends State<Register> {
                           fontSize: tinySize,
                         ),
                         errorText: _whatsappError
-                            ? 'This value can\'t be empty'
+                            ? 'Field ini harus diisi'
                             : null,
                       ),
                       onChanged: (value) => _userProvider.whatsapp = value,

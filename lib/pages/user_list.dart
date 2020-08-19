@@ -62,7 +62,13 @@ class _UserListState extends State<UserList> {
   @override
   Widget build(BuildContext context) {
     if (Provider.of<List<User>>(context) != null) {
-      _listUser = Provider.of<List<User>>(context).toList();
+      if (_access != 'Admin') {
+        _listUser = Provider.of<List<User>>(context)
+            .where((user) => user.tipe == 'Admin')
+            .toList();
+      } else {
+        _listUser = Provider.of<List<User>>(context).toList();
+      }
     }
 
     return Scaffold(
@@ -80,16 +86,6 @@ class _UserListState extends State<UserList> {
             fontWeight: fontBold,
           ),
         ),
-       /* leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: primaryContentColor),
-          onPressed: () => Navigator.of(context).pop(),
-        ),*/
-        /*actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add, color: primaryContentColor),
-            onPressed: () => Navigator.of(context).pushNamed(UserForm.id),
-          ),
-        ],*/
         bottom: PreferredSize(
           child: Container(
             color: shadow,
@@ -183,158 +179,143 @@ class _UserListState extends State<UserList> {
                                           padding: EdgeInsets.all(5),
                                           child: Stack(
                                             children: <Widget>[
-                                              Align(
-                                                alignment: Alignment.topLeft,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      _filterListUser[index]
-                                                          .nama,
-                                                      style: TextStyle(
-                                                        fontFamily: primaryFont,
-                                                        fontSize: tinySize,
+                                              ListView(
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
+                                                children: <Widget>[
+                                                  Row(
+                                                    children: <Widget>[
+                                                      (_filterListUser[index]
+                                                          .jenis_kelamin ==
+                                                          'Laki-Laki')
+                                                          ? Icon(
+                                                        MdiIcons
+                                                            .genderMale,
                                                         color:
-                                                            primaryContentColor,
-                                                        fontWeight: fontBold,
+                                                        secondaryColor,
+                                                        size: microSize,
+                                                      )
+                                                          : Icon(
+                                                        MdiIcons
+                                                            .genderFemale,
+                                                        color:
+                                                        primaryColor,
+                                                        size: microSize,
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Icon(
-                                                          Icons.account_box,
-                                                          color: accentColor,
-                                                          size: microSize,
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Text(
+                                                        _filterListUser[index].nama,
+                                                        style: TextStyle(
+                                                          fontFamily: primaryFont,
+                                                          fontSize: tinySize,
+                                                          color:
+                                                          primaryContentColor,
+                                                          fontWeight: fontBold,
                                                         ),
-                                                        SizedBox(
-                                                          width: 5,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.account_box,
+                                                        color: accentColor,
+                                                        size: microSize,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Text(
+                                                        _filterListUser[index]
+                                                            .tipe,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              primaryFont,
+                                                          fontSize: microSize,
+                                                          color:
+                                                              primaryContentColor,
                                                         ),
-                                                        Text(
-                                                          _filterListUser[index]
-                                                              .tipe,
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                primaryFont,
-                                                            fontSize: microSize,
-                                                            color:
-                                                                primaryContentColor,
-                                                          ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.phone,
+                                                        color: secondaryColor,
+                                                        size: microSize,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Text(
+                                                        _filterListUser[index]
+                                                            .whatsapp,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              primaryFont,
+                                                          fontSize: microSize,
+                                                          color:
+                                                              primaryContentColor,
                                                         ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Icon(
-                                                          Icons.phone,
-                                                          color: secondaryColor,
-                                                          size: microSize,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Icon(
+                                                        Icons.email,
+                                                        color: primaryColor,
+                                                        size: microSize,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Text(
+                                                        _filterListUser[index]
+                                                            .email,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              primaryFont,
+                                                          fontSize: microSize,
+                                                          color:
+                                                              primaryContentColor,
                                                         ),
-                                                        SizedBox(
-                                                          width: 5,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  SizedBox(
+                                                    height: 5,
+                                                  ),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        _filterListUser[index]
+                                                            .id,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              primaryFont,
+                                                          fontSize: microSize,
+                                                          color:
+                                                              primaryContentColor,
                                                         ),
-                                                        Text(
-                                                          _filterListUser[index]
-                                                              .whatsapp,
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                primaryFont,
-                                                            fontSize: microSize,
-                                                            color:
-                                                                primaryContentColor,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Icon(
-                                                          Icons.email,
-                                                          color: primaryColor,
-                                                          size: microSize,
-                                                        ),
-                                                        SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                        Text(
-                                                          _filterListUser[index]
-                                                              .email,
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                primaryFont,
-                                                            fontSize: microSize,
-                                                            color:
-                                                                primaryContentColor,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Row(
-                                                      children: <Widget>[
-                                                        (_filterListUser[index]
-                                                                    .jenis_kelamin ==
-                                                                'Laki-Laki')
-                                                            ? Icon(
-                                                                MdiIcons
-                                                                    .genderMale,
-                                                                color:
-                                                                    secondaryColor,
-                                                                size: microSize,
-                                                              )
-                                                            : Icon(
-                                                                MdiIcons
-                                                                    .genderFemale,
-                                                                color:
-                                                                    primaryColor,
-                                                                size: microSize,
-                                                              ),
-                                                        SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                        Text(
-                                                          _filterListUser[index]
-                                                              .jenis_kelamin,
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                primaryFont,
-                                                            fontSize: microSize,
-                                                            color:
-                                                                primaryContentColor,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment.end,
-                                                      children: <Widget>[
-                                                        Text(
-                                                          _filterListUser[index]
-                                                              .id,
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                primaryFont,
-                                                            fontSize: microSize,
-                                                            color:
-                                                                primaryContentColor,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
                                               Align(
                                                 alignment: Alignment.topRight,
@@ -417,19 +398,44 @@ class _UserListState extends State<UserList> {
                                           padding: const EdgeInsets.all(5),
                                           child: Stack(
                                             children: <Widget>[
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                              ListView(
+                                                physics:
+                                                    NeverScrollableScrollPhysics(),
                                                 children: <Widget>[
-                                                  Text(
-                                                    _listUser[index].nama,
-                                                    style: TextStyle(
-                                                      fontFamily: primaryFont,
-                                                      fontSize: tinySize,
-                                                      color:
-                                                          primaryContentColor,
-                                                      fontWeight: fontBold,
-                                                    ),
+                                                  Row(
+                                                    children: <Widget>[
+                                                      (_listUser[index]
+                                                                  .jenis_kelamin ==
+                                                              'Laki-Laki')
+                                                          ? Icon(
+                                                              MdiIcons
+                                                                  .genderMale,
+                                                              color:
+                                                                  secondaryColor,
+                                                              size: microSize,
+                                                            )
+                                                          : Icon(
+                                                              MdiIcons
+                                                                  .genderFemale,
+                                                              color:
+                                                                  primaryColor,
+                                                              size: microSize,
+                                                            ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Text(
+                                                        _listUser[index].nama,
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              primaryFont,
+                                                          fontSize: tinySize,
+                                                          color:
+                                                              primaryContentColor,
+                                                          fontWeight: fontBold,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                   SizedBox(
                                                     height: 5,
@@ -509,41 +515,6 @@ class _UserListState extends State<UserList> {
                                                   ),
                                                   SizedBox(
                                                     height: 5,
-                                                  ),
-                                                  Row(
-                                                    children: <Widget>[
-                                                      (_listUser[index]
-                                                                  .jenis_kelamin ==
-                                                              'Laki-Laki')
-                                                          ? Icon(
-                                                              MdiIcons
-                                                                  .genderMale,
-                                                              color:
-                                                                  secondaryColor,
-                                                              size: microSize,
-                                                            )
-                                                          : Icon(
-                                                              MdiIcons
-                                                                  .genderFemale,
-                                                              color:
-                                                                  primaryColor,
-                                                              size: microSize,
-                                                            ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Text(
-                                                        _listUser[index]
-                                                            .jenis_kelamin,
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              primaryFont,
-                                                          fontSize: microSize,
-                                                          color:
-                                                              primaryContentColor,
-                                                        ),
-                                                      ),
-                                                    ],
                                                   ),
                                                   Row(
                                                     mainAxisAlignment:

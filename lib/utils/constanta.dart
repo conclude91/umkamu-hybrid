@@ -1,6 +1,6 @@
 import 'package:umkamu/utils/theme.dart';
 
-final String adminContact = '+628122153935';
+//final String adminContact = '+628122153935';
 final String copyright = appName + ' \u00a9 2020';
 final String fbId = '292360518665049';
 final String adminEmail = 'andri.nugraha.r@gmail.com';
@@ -50,12 +50,18 @@ final String msgKirimProfil = 'Hai Admin, \n\n'
     'Thanks...';
 
 final String msgModal = 'Hai Admin, \n\n'
-    'Saya tertarik ingin mengajukan pemodalan di Mega Finance ini.\n\n'
-    'Saya akan siapkan beberapa persyaratan seperti berikut ini :\n'
-    '1. FC KTP Pemohon\n'
-    '2. FC KTP Pasangan\n'
-    '3. FC Tagihan PBB/Listrik/Telepon/PAM\n'
-    '4. FC Rekening Koran (3 bulan terakhir)\n'
-    '5. Slip Gaji\n'
-    '6. Surat Permohonan Pembiayaan ke Mega Finance\n'
-    '7. Quotation dari UMkaMU ke Konsumen';
+        'Saya tertarik ingin mengajukan pemodalan di ' +
+    appName +
+    ' ini.\n\n'
+        'Saya akan siapkan beberapa persyaratan seperti berikut ini :\n'
+        '1. FC KTP Pemohon\n'
+        '2. FC KTP Pasangan\n'
+        '3. FC Tagihan PBB/Listrik/Telepon/PAM\n'
+        '4. FC Rekening Koran (3 bulan terakhir)\n'
+        '5. Slip Gaji\n'
+        '6. Surat Permohonan Pembiayaan ke ' +
+    appName +
+    '\n'
+        '7. Quotation dari ' +
+    appName +
+    ' ke Konsumen';

@@ -14,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:social_share/social_share.dart';
+import 'package:umkamu/models/contact.dart';
 import 'package:umkamu/models/franchise.dart';
 import 'package:umkamu/models/user.dart';
 import 'package:umkamu/providers/franchise_provider.dart';
@@ -39,6 +40,8 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
   String _idUser;
   DateTime _currentTime;
   String _msgDate, _fbDate, _instaDate, _twitDate, _waDate;
+  List<Contact> _listContact = [];
+  String _noFranchise = '';
 
   @override
   void initState() {
@@ -77,8 +80,8 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
     setState(() {
       _listImage = [
         NetworkImage(_franchiseProvider.foto1),
+        NetworkImage(_franchiseProvider.foto2),
         NetworkImage(_franchiseProvider.foto3),
-        NetworkImage(_franchiseProvider.foto1),
       ];
     });
   }
@@ -156,6 +159,14 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
 
   @override
   Widget build(BuildContext context) {
+    if (Provider.of<List<Contact>>(context) != null) {
+      _listContact = Provider.of<List<Contact>>(context, listen: false)
+          .where((contact) => contact.id == '0')
+          .toList();
+    }
+    if (_listContact.length == 1) {
+      _noFranchise = _replaceCharAt(_listContact[0].no_franchise, 0, '+62');
+    }
     _userProvider = Provider.of<UserProvider>(context);
     _franchiseProvider = Provider.of<FranchiseProvider>(context);
     var _listFranchise = Provider.of<List<Franchise>>(context)
@@ -271,7 +282,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                     primaryColorHex,
                                     primaryColorHex,
                                     'https://api.whatsapp.com/send?phone=' +
-                                        adminContact +
+                                        _noFranchise +
                                         '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
                                         Uri.encodeComponent(
                                             _franchiseProvider.nama) +
@@ -315,7 +326,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                         primaryColorHex,
                                         primaryColorHex,
                                         'https://api.whatsapp.com/send?phone=' +
-                                            adminContact +
+                                            _noFranchise +
                                             '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
                                             Uri.encodeComponent(
                                                 _franchiseProvider.nama) +
@@ -363,7 +374,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                       'usaha'
                                     ],
                                     url: 'https://api.whatsapp.com/send?phone=' +
-                                        adminContact +
+                                        _noFranchise +
                                         '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
                                         Uri.encodeComponent(
                                             _franchiseProvider.nama) +
@@ -401,7 +412,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                               onTap: () {
                                 SocialShare.shareWhatsapp(
                                         'https://api.whatsapp.com/send?phone=' +
-                                            adminContact +
+                                            _noFranchise +
                                             '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
                                             Uri.encodeComponent(
                                                 _franchiseProvider.nama) +
@@ -447,7 +458,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                               onTap: () {
                                 Clipboard.setData(ClipboardData(
                                     text: 'https://api.whatsapp.com/send?phone=' +
-                                        adminContact +
+                                        _noFranchise +
                                         '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
                                         Uri.encodeComponent(
                                             _franchiseProvider.nama) +
@@ -476,7 +487,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                 SocialShare.shareSms(
                                         "Tertarik dengan usaha seperti ini ? Jika tertarik klik tautan di bawah ini untuk informasi lebih lanjut :\n\n",
                                         url: 'https://api.whatsapp.com/send?phone=' +
-                                            adminContact +
+                                            _noFranchise +
                                             '&text=Hai%20Admin,%0A%0ASaya%20tertarik%20ingin%20bergabung%20dengan%20usaha%20' +
                                             Uri.encodeComponent(
                                                 _franchiseProvider.nama) +
@@ -569,7 +580,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                         onTap: () {
                           _showConfirmationAlert(
                               context,
-                              adminContact,
+                              _noFranchise,
                               'Berminat bergabung dengan usaha ini ?',
                               'Hai Admin\n\nSaya berminat bergabung dengan bisnis Franchise : ' +
                                   _franchiseProvider.nama +

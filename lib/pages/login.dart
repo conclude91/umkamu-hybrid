@@ -115,10 +115,8 @@ class _LoginState extends State<Login> {
                     child: TextField(
                       controller: _emailController,
                       onChanged: (value) => _userProvider.email = value,
-                      maxLength: 50,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
-                        counterText: '',
                         border: InputBorder.none,
                         hintText: 'email@mu.com',
                         hintStyle: TextStyle(
@@ -127,7 +125,7 @@ class _LoginState extends State<Login> {
                           fontSize: tinySize,
                         ),
                         errorText:
-                            _emailError ? 'This value can\'t be empty' : null,
+                            _emailError ? 'Field ini harus diisi' : null,
                       ),
                     ),
                   ),
@@ -164,11 +162,9 @@ class _LoginState extends State<Login> {
                     child: TextField(
                       controller: _passwordController,
                       onChanged: (value) => _userProvider.password = value,
-                      maxLength: 50,
                       obscureText: true,
                       textAlign: TextAlign.center,
                       decoration: InputDecoration(
-                        counterText: '',
                         border: InputBorder.none,
                         hintText: '*********',
                         hintStyle: TextStyle(
@@ -177,7 +173,7 @@ class _LoginState extends State<Login> {
                           fontSize: tinySize,
                         ),
                         errorText: _passwordError
-                            ? 'This value can\'t be empty'
+                            ? 'Field ini harus diisi'
                             : null,
                       ),
                     ),

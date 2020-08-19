@@ -162,20 +162,43 @@ class _LeaderListState extends State<LeaderList> {
                                             children: <Widget>[
                                               Align(
                                                 alignment: Alignment.topLeft,
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
+                                                child: ListView(
+                                                  physics: NeverScrollableScrollPhysics(),
                                                   children: <Widget>[
-                                                    Text(
-                                                      _filterListUser[index]
-                                                          .nama,
-                                                      style: TextStyle(
-                                                        fontFamily: primaryFont,
-                                                        fontSize: tinySize,
-                                                        color:
+                                                    Row(
+                                                      children: <Widget>[
+                                                        (_filterListUser[index]
+                                                            .jenis_kelamin ==
+                                                            'Laki-Laki')
+                                                            ? Icon(
+                                                          MdiIcons
+                                                              .genderMale,
+                                                          color:
+                                                          secondaryColor,
+                                                          size: microSize,
+                                                        )
+                                                            : Icon(
+                                                          MdiIcons
+                                                              .genderFemale,
+                                                          color:
+                                                          primaryColor,
+                                                          size: microSize,
+                                                        ),
+                                                        SizedBox(
+                                                          width: 5,
+                                                        ),
+                                                        Text(
+                                                          _filterListUser[index]
+                                                              .nama,
+                                                          style: TextStyle(
+                                                            fontFamily: primaryFont,
+                                                            fontSize: tinySize,
+                                                            color:
                                                             primaryContentColor,
-                                                        fontWeight: fontBold,
-                                                      ),
+                                                            fontWeight: fontBold,
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                     SizedBox(
                                                       height: 5,
@@ -257,41 +280,6 @@ class _LeaderListState extends State<LeaderList> {
                                                     ),
                                                     SizedBox(
                                                       height: 5,
-                                                    ),
-                                                    Row(
-                                                      children: <Widget>[
-                                                        (_filterListUser[index]
-                                                                    .jenis_kelamin ==
-                                                                'Laki-Laki')
-                                                            ? Icon(
-                                                                MdiIcons
-                                                                    .genderMale,
-                                                                color:
-                                                                    secondaryColor,
-                                                                size: microSize,
-                                                              )
-                                                            : Icon(
-                                                                MdiIcons
-                                                                    .genderFemale,
-                                                                color:
-                                                                    primaryColor,
-                                                                size: microSize,
-                                                              ),
-                                                        SizedBox(
-                                                          width: 5,
-                                                        ),
-                                                        Text(
-                                                          _filterListUser[index]
-                                                              .jenis_kelamin,
-                                                          style: TextStyle(
-                                                            fontFamily:
-                                                                primaryFont,
-                                                            fontSize: microSize,
-                                                            color:
-                                                                primaryContentColor,
-                                                          ),
-                                                        ),
-                                                      ],
                                                     ),
                                                     Row(
                                                       mainAxisAlignment:
@@ -388,19 +376,42 @@ class _LeaderListState extends State<LeaderList> {
                                           padding: const EdgeInsets.all(5),
                                           child: Stack(
                                             children: <Widget>[
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
+                                              ListView(
+                                                physics: NeverScrollableScrollPhysics(),
                                                 children: <Widget>[
-                                                  Text(
-                                                    _listUser[index].nama,
-                                                    style: TextStyle(
-                                                      fontFamily: primaryFont,
-                                                      fontSize: tinySize,
-                                                      color:
+                                                  Row(
+                                                    children: <Widget>[
+                                                      (_listUser[index]
+                                                          .jenis_kelamin ==
+                                                          'Laki-Laki')
+                                                          ? Icon(
+                                                        MdiIcons
+                                                            .genderMale,
+                                                        color:
+                                                        secondaryColor,
+                                                        size: microSize,
+                                                      )
+                                                          : Icon(
+                                                        MdiIcons
+                                                            .genderFemale,
+                                                        color:
+                                                        primaryColor,
+                                                        size: microSize,
+                                                      ),
+                                                      SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      Text(
+                                                        _listUser[index].nama,
+                                                        style: TextStyle(
+                                                          fontFamily: primaryFont,
+                                                          fontSize: tinySize,
+                                                          color:
                                                           primaryContentColor,
-                                                      fontWeight: fontBold,
-                                                    ),
+                                                          fontWeight: fontBold,
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                   SizedBox(
                                                     height: 5,
@@ -480,41 +491,6 @@ class _LeaderListState extends State<LeaderList> {
                                                   ),
                                                   SizedBox(
                                                     height: 5,
-                                                  ),
-                                                  Row(
-                                                    children: <Widget>[
-                                                      (_listUser[index]
-                                                                  .jenis_kelamin ==
-                                                              'Laki-Laki')
-                                                          ? Icon(
-                                                              MdiIcons
-                                                                  .genderMale,
-                                                              color:
-                                                                  secondaryColor,
-                                                              size: microSize,
-                                                            )
-                                                          : Icon(
-                                                              MdiIcons
-                                                                  .genderFemale,
-                                                              color:
-                                                                  primaryColor,
-                                                              size: microSize,
-                                                            ),
-                                                      SizedBox(
-                                                        width: 5,
-                                                      ),
-                                                      Text(
-                                                        _listUser[index]
-                                                            .jenis_kelamin,
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              primaryFont,
-                                                          fontSize: microSize,
-                                                          color:
-                                                              primaryContentColor,
-                                                        ),
-                                                      ),
-                                                    ],
                                                   ),
                                                   Row(
                                                     mainAxisAlignment:

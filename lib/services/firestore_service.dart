@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:umkamu/models/contact.dart';
 import 'package:umkamu/models/franchise.dart';
 import 'package:umkamu/models/user.dart';
 
@@ -18,6 +19,17 @@ class FirestoreService {
 
   Future<void> saveUser(User user) {
     return _db.collection('users').document(user.id).setData(user.toMap());
+  }
+
+  Future<void> saveContact(Contact contact) {
+    return _db.collection('contacts').document(contact.id).setData(contact.toMap());
+  }
+
+  Stream<List<Contact>> getAllContact() {
+    return _db.collection('contacts').snapshots().map((snapshot) => snapshot
+        .documents
+        .map((document) => Contact.fromFirestore(document.data))
+        .toList());
   }
 
   Stream<List<User>> getAllUser() {
@@ -43,6 +55,10 @@ class FirestoreService {
         .documents
         .map((document) => Franchise.fromFirestore(document.data))
         .toList());
+  }
+
+  Future<void> removeContact(String id) {
+    return _db.collection('contacts').document(id).delete();
   }
 
   Future<void> removeUser(String id) {

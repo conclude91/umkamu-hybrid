@@ -51,6 +51,7 @@ class _SupplierState extends State<Supplier> {
     _screenHeight = size.height;
     _listFranchise = Provider.of<List<Franchise>>(context)
         .where((franchise) => franchise.promo.toString() == 'Ya')
+        .where((franchise) => franchise.disetujui == 'Ya')
         .toList();
     if (_listImagePromo.length == 0) {
       for (int i = 0; i < _listFranchise.length; i++) {
@@ -125,10 +126,19 @@ class _SupplierState extends State<Supplier> {
                           children: <Widget>[
                             Flexible(
                               flex: 10,
-                              child: Image(
-                                image: AssetImage('assets/tanihub.png'),
-                                height: 60,
-                              ),
+                              child: Container(
+                                padding: EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: shadow,
+                                      width: 1,
+                                    )),
+                                child: Image(
+                                  image: AssetImage('assets/images/tanihub.png'),
+                                  height: 60,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
                             ),
                           ],
                         ),
@@ -138,16 +148,25 @@ class _SupplierState extends State<Supplier> {
                       flex: 4,
                       child: InkWell(
                         onTap: () {
-                          _launchURL('https://www.ikea.co.id/in');
+                          _launchURL('http://suburmart.com/');
                         },
                         child: Column(
                           children: <Widget>[
                             Flexible(
-                              flex: 10,
-                              child: Image(
-                                image: AssetImage('assets/ikea.png'),
-                                height: 60,
-                              ),
+                                flex: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: shadow,
+                                        width: 1,
+                                      )),
+                                  child: Image(
+                                    image: AssetImage('assets/images/suburmart.png'),
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
                             ),
                           ],
                         ),
@@ -162,11 +181,20 @@ class _SupplierState extends State<Supplier> {
                         child: Column(
                           children: <Widget>[
                             Flexible(
-                              flex: 10,
-                              child: Image(
-                                image: AssetImage('assets/ace.png'),
-                                height: 60,
-                              ),
+                                flex: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: shadow,
+                                        width: 1,
+                                      )),
+                                  child: Image(
+                                    image: AssetImage('assets/images/ace.png'),
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
                             ),
                           ],
                         ),
@@ -190,11 +218,20 @@ class _SupplierState extends State<Supplier> {
                         child: Column(
                           children: <Widget>[
                             Flexible(
-                              flex: 10,
-                              child: Image(
-                                image: AssetImage('assets/informa.png'),
-                                height: 60,
-                              ),
+                                flex: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: shadow,
+                                        width: 1,
+                                      )),
+                                  child: Image(
+                                    image: AssetImage('assets/images/informa.png'),
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
                             ),
                           ],
                         ),
@@ -204,16 +241,25 @@ class _SupplierState extends State<Supplier> {
                       flex: 4,
                       child: InkWell(
                         onTap: () {
-                          _launchURL('https://rfc-indonesia.weebly.com/');
+                          _launchURL('http://kioslistrik.com');
                         },
                         child: Column(
                           children: <Widget>[
                             Flexible(
-                              flex: 10,
-                              child: Image(
-                                image: AssetImage('assets/rfc.jpg'),
-                                height: 60,
-                              ),
+                                flex: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: shadow,
+                                        width: 1,
+                                      )),
+                                  child: Image(
+                                    image: AssetImage('assets/images/kiosklistrik.png'),
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
                             ),
                           ],
                         ),
@@ -223,16 +269,25 @@ class _SupplierState extends State<Supplier> {
                       flex: 3,
                       child: InkWell(
                         onTap: () {
-                          _launchURL('https://bkdelivery.co.id/');
+                          _launchURL('http://www.maxindojaya.com/');
                         },
                         child: Column(
                           children: <Widget>[
                             Flexible(
-                              flex: 10,
-                              child: Image(
-                                image: AssetImage('assets/burgerking.png'),
-                                height: 60,
-                              ),
+                                flex: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: shadow,
+                                        width: 1,
+                                      )),
+                                  child: Image(
+                                    image: AssetImage('assets/images/maxindo.png'),
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
                             ),
                           ],
                         ),
@@ -251,16 +306,25 @@ class _SupplierState extends State<Supplier> {
                       flex: 3,
                       child: InkWell(
                         onTap: () {
-                          _launchURL('https://www.warunkupnormal.com/');
+                          _launchURL('https://gopack.id/');
                         },
                         child: Column(
                           children: <Widget>[
                             Flexible(
-                              flex: 10,
-                              child: Image(
-                                image: AssetImage('assets/upnormal.png'),
-                                height: 60,
-                              ),
+                                flex: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: shadow,
+                                        width: 1,
+                                      )),
+                                  child: Image(
+                                    image: AssetImage('assets/images/gopack.png'),
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
                             ),
                           ],
                         ),
@@ -270,22 +334,31 @@ class _SupplierState extends State<Supplier> {
                       flex: 4,
                       child: InkWell(
                         onTap: () {
-                          _launchURL('https://www.starbucks.com/');
+                          _launchURL('https://twitter.com/mutiarasuperk');
                         },
                         child: Column(
                           children: <Widget>[
                             Flexible(
-                              flex: 10,
-                              child: Image(
-                                image: AssetImage('assets/starbucks.png'),
-                                height: 60,
-                              ),
+                                flex: 10,
+                                child: Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: shadow,
+                                        width: 1,
+                                      )),
+                                  child: Image(
+                                    image: AssetImage('assets/images/mutiara.png'),
+                                    height: 60,
+                                    fit: BoxFit.cover,
+                                  ),
+                                )
                             ),
                           ],
                         ),
                       ),
                     ),
-                    Expanded(
+                    /*Expanded(
                       flex: 3,
                       child: InkWell(
                         onTap: () {
@@ -303,7 +376,7 @@ class _SupplierState extends State<Supplier> {
                           ],
                         ),
                       ),
-                    ),
+                    ),*/
                   ],
                 ),
               ),
