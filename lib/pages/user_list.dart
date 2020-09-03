@@ -179,9 +179,7 @@ class _UserListState extends State<UserList> {
                                           padding: EdgeInsets.all(5),
                                           child: Stack(
                                             children: <Widget>[
-                                              ListView(
-                                                physics:
-                                                    NeverScrollableScrollPhysics(),
+                                              Column(
                                                 children: <Widget>[
                                                   Row(
                                                     children: <Widget>[
@@ -398,9 +396,7 @@ class _UserListState extends State<UserList> {
                                           padding: const EdgeInsets.all(5),
                                           child: Stack(
                                             children: <Widget>[
-                                              ListView(
-                                                physics:
-                                                    NeverScrollableScrollPhysics(),
+                                              Column(
                                                 children: <Widget>[
                                                   Row(
                                                     children: <Widget>[

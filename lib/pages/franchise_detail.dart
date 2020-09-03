@@ -39,7 +39,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
   String _imageData;
   String _idUser;
   DateTime _currentTime;
-  String _msgDate, _fbDate, _instaDate, _twitDate, _waDate;
+  String _date;
   List<Contact> _listContact = [];
   String _noFranchise = '';
 
@@ -143,11 +143,7 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _idUser = prefs.getString('id') ?? '';
-      _msgDate = prefs.getString('msgDate') ?? null;
-      _waDate = prefs.getString('waDate') ?? null;
-      _fbDate = prefs.getString('fbDate') ?? null;
-      _instaDate = prefs.getString('instaDate') ?? null;
-      _twitDate = prefs.getString('twitDate') ?? null;
+      _date = prefs.getString('date') ?? '';
     });
   }
 
@@ -289,23 +285,25 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                         '%20.%0A%0AID%20Referral%20%20%3A%20' +
                                         _userProvider.id,
                                     appId: '292360518665049');
-
                                 var difDay;
-                                if (_fbDate != null) {
+                                if (_date != '') {
                                   difDay = _currentTime
-                                      .difference(DateTime.parse(_fbDate))
+                                      .difference(DateTime.parse(_date))
                                       .inDays;
                                 } else {
-                                  difDay = 1;
+                                  difDay = 0;
                                 }
 
                                 if (_userProvider.poin >= 15000) {
                                   _userProvider.poin = 0;
-                                } else if (difDay > 0) {
+                                } else {
+                                  if (difDay > 0) {
+                                    _userProvider.poin = 0;
+                                  }
                                   _userProvider.poin = _userProvider.poin + 1;
                                 }
                                 _setPreferences(
-                                    'fbDate',
+                                    'date',
                                     DateFormat('yyyy-MM-dd')
                                         .format(_currentTime));
                                 _userProvider.save();
@@ -336,21 +334,24 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                   print(data);
                                 });
                                 var difDay;
-                                if (_instaDate != null) {
+                                if (_date != '') {
                                   difDay = _currentTime
-                                      .difference(DateTime.parse(_instaDate))
+                                      .difference(DateTime.parse(_date))
                                       .inDays;
                                 } else {
-                                  difDay = 1;
+                                  difDay = 0;
                                 }
 
                                 if (_userProvider.poin >= 15000) {
                                   _userProvider.poin = 0;
-                                } else if (difDay > 0) {
+                                } else {
+                                  if (difDay > 0) {
+                                    _userProvider.poin = 0;
+                                  }
                                   _userProvider.poin = _userProvider.poin + 1;
                                 }
                                 _setPreferences(
-                                    'instaDate',
+                                    'date',
                                     DateFormat('yyyy-MM-dd')
                                         .format(_currentTime));
                                 _userProvider.save();
@@ -381,21 +382,24 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                         '%20.%0A%0AID%20Referral%20%20%3A%20' +
                                         _userProvider.id);
                                 var difDay;
-                                if (_twitDate != null) {
+                                if (_date != '') {
                                   difDay = _currentTime
-                                      .difference(DateTime.parse(_twitDate))
+                                      .difference(DateTime.parse(_date))
                                       .inDays;
                                 } else {
-                                  difDay = 1;
+                                  difDay = 0;
                                 }
 
                                 if (_userProvider.poin >= 15000) {
                                   _userProvider.poin = 0;
-                                } else if (difDay > 0) {
+                                } else {
+                                  if (difDay > 0) {
+                                    _userProvider.poin = 0;
+                                  }
                                   _userProvider.poin = _userProvider.poin + 1;
                                 }
                                 _setPreferences(
-                                    'twitDate',
+                                    'date',
                                     DateFormat('yyyy-MM-dd')
                                         .format(_currentTime));
                                 _userProvider.save();
@@ -422,21 +426,24 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                   print(data);
                                 });
                                 var difDay;
-                                if (_waDate != null) {
+                                if (_date != '') {
                                   difDay = _currentTime
-                                      .difference(DateTime.parse(_waDate))
+                                      .difference(DateTime.parse(_date))
                                       .inDays;
                                 } else {
-                                  difDay = 1;
+                                  difDay = 0;
                                 }
 
                                 if (_userProvider.poin >= 15000) {
                                   _userProvider.poin = 0;
-                                } else if (difDay > 0) {
+                                } else {
+                                  if (difDay > 0) {
+                                    _userProvider.poin = 0;
+                                  }
                                   _userProvider.poin = _userProvider.poin + 1;
                                 }
                                 _setPreferences(
-                                    'waDate',
+                                    'date',
                                     DateFormat('yyyy-MM-dd')
                                         .format(_currentTime));
                                 _userProvider.save();
@@ -501,21 +508,24 @@ class _FranchiseDetailState extends State<FranchiseDetail> {
                                   print(data);
                                 });
                                 var difDay;
-                                if (_msgDate != null) {
+                                if (_date != '') {
                                   difDay = _currentTime
-                                      .difference(DateTime.parse(_msgDate))
+                                      .difference(DateTime.parse(_date))
                                       .inDays;
                                 } else {
-                                  difDay = 1;
+                                  difDay = 0;
                                 }
 
                                 if (_userProvider.poin >= 15000) {
                                   _userProvider.poin = 0;
-                                } else if (difDay > 0) {
+                                } else {
+                                  if (difDay > 0) {
+                                    _userProvider.poin = 0;
+                                  }
                                   _userProvider.poin = _userProvider.poin + 1;
                                 }
                                 _setPreferences(
-                                    'msgDate',
+                                    'date',
                                     DateFormat('yyyy-MM-dd')
                                         .format(_currentTime));
                                 _userProvider.save();

@@ -50,12 +50,8 @@ class _LoginState extends State<Login> {
   @override
   Widget build(BuildContext context) {
     if (Provider.of<List<User>>(context) != null) {
-      _listUser = Provider.of<List<User>>(context)
-          .where((user) => user.email == _emailController.text)
-          .where((user) => user.password == _passwordController.text)
-          .toList();
+      _listUser = Provider.of<List<User>>(context).toList();
     }
-
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
@@ -124,8 +120,7 @@ class _LoginState extends State<Login> {
                           fontFamily: primaryFont,
                           fontSize: tinySize,
                         ),
-                        errorText:
-                            _emailError ? 'Field ini harus diisi' : null,
+                        errorText: _emailError ? 'Field ini harus diisi' : null,
                       ),
                     ),
                   ),
@@ -172,9 +167,8 @@ class _LoginState extends State<Login> {
                           fontFamily: primaryFont,
                           fontSize: tinySize,
                         ),
-                        errorText: _passwordError
-                            ? 'Field ini harus diisi'
-                            : null,
+                        errorText:
+                            _passwordError ? 'Field ini harus diisi' : null,
                       ),
                     ),
                   ),
@@ -201,7 +195,7 @@ class _LoginState extends State<Login> {
                               ? _passwordError = true
                               : _passwordError = false;
                         });
-
+                        FocusScope.of(context).unfocus();
                         if (checkEmailFormat(_emailController.text) == false) {
                           Fluttertoast.showToast(
                               msg: 'Inputan email tidak valid',
@@ -212,26 +206,34 @@ class _LoginState extends State<Login> {
                                   primaryContentColor.withOpacity(0.5),
                               textColor: secondaryContentColor,
                               fontSize: microSize);
-                        }
-
-                        if (_emailError == false &&
-                            checkEmailFormat(_emailController.text) &&
-                            _passwordError == false) {
-                          if (_listUser.length > 0) {
-                            _setPreferences(_listUser[0]);
-                            Navigator.of(context)
-                                .pushReplacementNamed(Dashboard.id);
-                          } else {
-                            Fluttertoast.showToast(
-                                msg:
-                                    'Login gagal.\nCek kembali inputan email dan password.',
-                                toastLength: Toast.LENGTH_SHORT,
-                                gravity: ToastGravity.BOTTOM,
-                                timeInSecForIosWeb: 1,
-                                backgroundColor:
-                                    primaryContentColor.withOpacity(0.5),
-                                textColor: secondaryContentColor,
-                                fontSize: microSize);
+                        } else {
+                          bool found = false;
+                          int i = 0;
+                          if (_emailError == false && _passwordError == false) {
+                            for (i; i < _listUser.length; i++) {
+                              if (_listUser[i].email == _emailController.text &&
+                                  _listUser[i].password ==
+                                      _passwordController.text) {
+                                found = true;
+                                break;
+                              }
+                            }
+                            if (found) {
+                              _setPreferences(_listUser[i]);
+                              Navigator.of(context)
+                                  .pushReplacementNamed(Dashboard.id);
+                            } else {
+                              Fluttertoast.showToast(
+                                  msg:
+                                      'Login gagal.\nCek kembali inputan email dan password.',
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.BOTTOM,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor:
+                                      primaryContentColor.withOpacity(0.5),
+                                  textColor: secondaryContentColor,
+                                  fontSize: microSize);
+                            }
                           }
                         }
                       },
@@ -261,8 +263,7 @@ class _LoginState extends State<Login> {
                         vertical: 20.0, horizontal: 20.0),
                     color: Colors.transparent,
                     onPressed: () {
-                      Navigator.of(context)
-                          .pushNamed(ForgotPassword.id);
+                      Navigator.of(context).pushNamed(ForgotPassword.id);
                     },
                     child: Text(
                       "Lupa Password?",
@@ -294,13 +295,27 @@ class _LoginState extends State<Login> {
                       onPressed: () => {
                         Navigator.of(context).pushNamed(Register.id),
                       },
-                      child: Text(
-                        "Belum punya akun? Daftar dulu disini.",
-                        style: TextStyle(
-                          color: primaryContentColor,
-                          fontFamily: primaryFont,
-                          fontSize: microSize,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Belum punya akun? Daftar dulu ",
+                            style: TextStyle(
+                              color: primaryContentColor,
+                              fontFamily: primaryFont,
+                              fontSize: microSize,
+                            ),
+                          ),
+                          Text(
+                            "disini.",
+                            style: TextStyle(
+                              color: primaryContentColor,
+                              fontFamily: primaryFont,
+                              fontSize: microSize,
+                              fontWeight: fontBold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

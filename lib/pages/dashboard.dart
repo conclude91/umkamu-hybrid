@@ -9,6 +9,7 @@ import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:ntp/ntp.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:umkamu/models/contact.dart';
@@ -26,6 +27,7 @@ import 'package:umkamu/pages/supplier.dart';
 import 'package:umkamu/pages/underconstruction.dart';
 import 'package:umkamu/pages/user_form.dart';
 import 'package:umkamu/pages/user_list.dart';
+import 'package:umkamu/providers/user_provider.dart';
 import 'package:umkamu/utils/constanta.dart';
 import 'package:umkamu/utils/theme.dart';
 
@@ -38,6 +40,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
+  UserProvider _userProvider;
   List<User> _listUser = [];
   List<Franchise> _listFranchisePromo = [];
   List<InkWell> _listImagePromo = [];
@@ -50,6 +53,8 @@ class _DashboardState extends State<Dashboard>
   bool _isLogin;
   String _id;
   String _access;
+  DateTime _currentTime;
+  String _date;
   int _bottomSelectedIndex = 0;
   PageController _pageController = PageController(
     initialPage: 0,
@@ -62,6 +67,8 @@ class _DashboardState extends State<Dashboard>
   void initState() {
     super.initState();
     _getPreferences();
+    _getCurrentTime();
+    _userProvider = Provider.of<UserProvider>(context, listen: false);
     _animationController = AnimationController(vsync: this, duration: duration);
     _dashboardScaleAnimation =
         Tween<double>(begin: 1, end: 0.6).animate(_animationController);
@@ -118,11 +125,7 @@ class _DashboardState extends State<Dashboard>
     SharedPreferences prefs = await SharedPreferences.getInstance();
     for (String key in prefs.getKeys()) {
       print(key);
-      if (key != 'msgDate' &&
-          key != 'fbDate' &&
-          key != 'instaDate' &&
-          key != 'twitDate' &&
-          key != 'waDate') {
+      if (key != 'date') {
         prefs.remove(key);
       }
     }
@@ -305,12 +308,25 @@ class _DashboardState extends State<Dashboard>
     );
   }
 
+  _setPreferences(String name, String data) async {
+    SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
+    sharedPreferences.setString(name, data);
+  }
+
   _getPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       _isLogin = prefs.getBool('isLogin') ?? false;
       _id = prefs.getString('id') ?? '';
       _access = prefs.getString('access') ?? '';
+      _date = prefs.getString('date') ?? '';
+    });
+  }
+
+  _getCurrentTime() async {
+    DateTime currentTime = await NTP.now();
+    setState(() {
+      _currentTime = currentTime;
     });
   }
 
@@ -375,11 +391,25 @@ class _DashboardState extends State<Dashboard>
         }
       }
     }
+    if (_listUser != null && _listUser.length > 0) {
+      if (_currentTime != null) {
+        var difDay;
+        if (_date != '') {
+          difDay = _currentTime.difference(DateTime.parse(_date)).inDays;
+          if (difDay > 0) {
+            _userProvider.user = _listUser[0];
+            _userProvider.poin = 0;
+            _userProvider.save();
+          }
+        }
+        _setPreferences('date', DateFormat('yyyy-MM-dd').format(_currentTime));
+      }
+    }
     return Scaffold(
       backgroundColor: backgroundColor,
       body: Stack(
         children: [
-          (isCollapsed ==  false)
+          (isCollapsed == false)
               ? WillPopScope(
                   onWillPop: () {
                     setState(() {
@@ -1134,7 +1164,7 @@ class _DashboardState extends State<Dashboard>
         _pageChanged(index);
       },
       children: <Widget>[
-       /* WillPopScope(
+        /* WillPopScope(
           onWillPop: () {
             _onBackpressed(0);
           },

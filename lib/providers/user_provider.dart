@@ -119,6 +119,7 @@ class UserProvider with ChangeNotifier {
 
   set leader(String value) {
     _leader = value;
+    notifyListeners();
   }
 
   set user(User user) {
@@ -135,30 +136,11 @@ class UserProvider with ChangeNotifier {
     royalty = user.royalty;
     tipe = user.tipe;
     leader = user.leader;
+    notifyListeners();
   }
 
   save() async {
     User user;
-    /*if (id == null) {
-      String millis = DateTime.now().millisecondsSinceEpoch.toString();
-      user = User(
-          id: millis,
-          foto: temp_file != null
-              ? await firestoreService.uploadFile(
-                  'users/foto/' + millis, File(_temp_file))
-              : foto,
-          nama: nama,
-          jenis_kelamin: jenis_kelamin,
-          email: email,
-          password: password,
-          whatsapp: whatsapp,
-          rekening: rekening,
-          poin: poin,
-          komisi: komisi,
-          royalty: royalty,
-          tipe: tipe,
-          leader: leader);
-    } else {*/
     user = User(
         id: id,
         foto: (temp_file != null && temp_file != '')
@@ -176,12 +158,13 @@ class UserProvider with ChangeNotifier {
         royalty: royalty,
         tipe: tipe,
         leader: leader);
-//    }
     firestoreService.saveUser(user);
   }
 
   remove(String id) async {
-    firestoreService.removeFile(await firestoreService.getRef(foto));
+    if (foto != 'assets/images/akun.jpg') {
+      firestoreService.removeFile(await firestoreService.getRef(foto));
+    }
     firestoreService.removeUser(id);
   }
 }

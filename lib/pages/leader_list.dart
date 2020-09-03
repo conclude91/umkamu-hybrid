@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:umkamu/models/user.dart';
+import 'package:umkamu/pages/user_form.dart';
 import 'package:umkamu/utils/theme.dart';
 
 class LeaderList extends StatefulWidget {
@@ -18,10 +20,12 @@ class _LeaderListState extends State<LeaderList> {
   TextEditingController _filterController = new TextEditingController();
   List<User> _listUser = [];
   List<User> _filterListUser = [];
+  String _access;
 
   @override
   void initState() {
     super.initState();
+    _getPreferences();
   }
 
   @override
@@ -46,6 +50,13 @@ class _LeaderListState extends State<LeaderList> {
     });
 
     setState(() {});
+  }
+
+  _getPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _access = prefs.getString('access') ?? '';
+    });
   }
 
   @override
@@ -122,6 +133,12 @@ class _LeaderListState extends State<LeaderList> {
                               margin: new EdgeInsets.symmetric(
                                   horizontal: 10.0, vertical: 6.0),
                               child: InkWell(
+                                onTap: () {
+                                  if (_access == 'Admin') {
+                                    Navigator.of(context).pushNamed(UserForm.id,
+                                        arguments: _filterListUser[index]);
+                                  }
+                                },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(3),
@@ -162,8 +179,7 @@ class _LeaderListState extends State<LeaderList> {
                                             children: <Widget>[
                                               Align(
                                                 alignment: Alignment.topLeft,
-                                                child: ListView(
-                                                  physics: NeverScrollableScrollPhysics(),
+                                                child: Column(
                                                   children: <Widget>[
                                                     Row(
                                                       children: <Widget>[
@@ -340,6 +356,12 @@ class _LeaderListState extends State<LeaderList> {
                               margin: new EdgeInsets.symmetric(
                                   horizontal: 10.0, vertical: 6.0),
                               child: InkWell(
+                                onTap: () {
+                                  if (_access == 'Admin') {
+                                    Navigator.of(context).pushNamed(UserForm.id,
+                                        arguments: _listUser[index]);
+                                  }
+                                },
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(3),
@@ -376,8 +398,7 @@ class _LeaderListState extends State<LeaderList> {
                                           padding: const EdgeInsets.all(5),
                                           child: Stack(
                                             children: <Widget>[
-                                              ListView(
-                                                physics: NeverScrollableScrollPhysics(),
+                                              Column(
                                                 children: <Widget>[
                                                   Row(
                                                     children: <Widget>[

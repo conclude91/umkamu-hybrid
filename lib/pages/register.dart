@@ -32,7 +32,7 @@ class _RegisterState extends State<Register> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _userProvider = Provider.of<UserProvider>(context, listen: false);
       _userProvider.id = DateTime.now().millisecondsSinceEpoch.toString();
       _userProvider.foto = 'assets/images/akun.jpg';
@@ -177,8 +177,7 @@ class _RegisterState extends State<Register> {
                           fontFamily: primaryFont,
                           fontSize: tinySize,
                         ),
-                        errorText:
-                            _namaError ? 'Field ini harus diisi' : null,
+                        errorText: _namaError ? 'Field ini harus diisi' : null,
                       ),
                       onChanged: (value) => _userProvider.nama = value,
                     ),
@@ -224,8 +223,7 @@ class _RegisterState extends State<Register> {
                           fontFamily: primaryFont,
                           fontSize: tinySize,
                         ),
-                        errorText:
-                            _emailError ? 'Field ini harus diisi' : null,
+                        errorText: _emailError ? 'Field ini harus diisi' : null,
                       ),
                       onChanged: (value) => _userProvider.email = value,
                     ),
@@ -271,9 +269,8 @@ class _RegisterState extends State<Register> {
                           fontFamily: primaryFont,
                           fontSize: tinySize,
                         ),
-                        errorText: _passwordError
-                            ? 'Field ini harus diisi'
-                            : null,
+                        errorText:
+                            _passwordError ? 'Field ini harus diisi' : null,
                       ),
                       onChanged: (value) => _userProvider.password = value,
                     ),
@@ -322,9 +319,8 @@ class _RegisterState extends State<Register> {
                           fontFamily: primaryFont,
                           fontSize: tinySize,
                         ),
-                        errorText: _whatsappError
-                            ? 'Field ini harus diisi'
-                            : null,
+                        errorText:
+                            _whatsappError ? 'Field ini harus diisi' : null,
                       ),
                       onChanged: (value) => _userProvider.whatsapp = value,
                     ),
@@ -425,12 +421,27 @@ class _RegisterState extends State<Register> {
                       onPressed: () => {
                         Navigator.pop(context),
                       },
-                      child: Text(
-                        "Sudah punya akun? Silahkan masuk disini.",
-                        style: TextStyle(
-                            color: primaryContentColor,
-                            fontFamily: primaryFont,
-                            fontSize: microSize),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Sudah punya akun? Silahkan masuk",
+                            style: TextStyle(
+                              color: primaryContentColor,
+                              fontFamily: primaryFont,
+                              fontSize: microSize,
+                            ),
+                          ),
+                          Text(
+                            "disini.",
+                            style: TextStyle(
+                              color: primaryContentColor,
+                              fontFamily: primaryFont,
+                              fontSize: microSize,
+                              fontWeight: fontBold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
